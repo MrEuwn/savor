@@ -14,11 +14,13 @@ export default function Viewer3D({ src, poster, name }: Props) {
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [secure, setSecure] = useState(true);
 
-  // model-viewer hanya ada di browser (custom element, pakai window/self).
-  // Muat dinamis di effect => SSR aman (tanpa "self is not defined").
+  // model-viewer hanya di browser (custom element, memakai window/self).
+  // Muat dinamis saat effect => SSR aman.
   useEffect(() => {
     let cancelled = false;
+    setSecure(window.isSecureContext);
     (async () => {
       try {
         if (!customElements.get("model-viewer")) {
@@ -67,7 +69,6 @@ export default function Viewer3D({ src, poster, name }: Props) {
     }
   };
 
-  // Fallback elegan: model gagal dimuat (AR tak didukung / GLB gagal) → poster.
   if (failed) {
     return poster ? (
       <img src={poster} alt={name} className="h-64 w-full object-cover" />
@@ -77,6 +78,8 @@ export default function Viewer3D({ src, poster, name }: Props) {
       </div>
     );
   }
+
+  const arBlocked = !secure;
 
   return (
     <div>
@@ -105,11 +108,23 @@ export default function Viewer3D({ src, poster, name }: Props) {
         <Button
           className="w-full"
           onClick={enterAR}
-          disabled={!loaded}
+          disabled={!loaded || arBlocked}
           aria-label={`Lihat ${name} di meja (AR)`}
         >
-          Lihat di Meja (AR)
+          {arBlocked ? "AR butuh HTTPS / localhost" : "Lihat di Meja (AR)"}
         </Button>
+        {!loaded && !arBlocked && (
+          <p className="mt-2 text-center text-xs text-stone-500">
+            AR aktif bila di HP (iOS Quick Look / Android Scene Viewer).
+          </p>
+        )}
+        {arBlocked && (
+          <p className="mt-2 text-center text-xs text-amber-700">
+            3D tetap bisa dirotasikan di atas. AR "Lihat di Meja" hanya aktif
+            melalui HTTPS (atau localhost di laptop) — buka link publik yang
+            sama lewat demo online untuk mengaktifkannya.
+          </p>
+        )}
       </div>
     </div>
   );
