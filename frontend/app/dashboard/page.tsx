@@ -243,7 +243,11 @@ export default function DashboardPage() {
       return;
     }
     let on = true;
-    const origin = window.location.origin;
+    // ponytail: origin bisa dicover via NEXT_PUBLIC_PUBLIC_BASE (Vercel URL) agar
+    // QR dari dashboard tetap menunjuk HTTPS; default = origin browser.
+    const origin =
+      process.env.NEXT_PUBLIC_PUBLIC_BASE?.replace(/\/$/, "") ||
+      window.location.origin;
     Promise.all(
       tables.map(async (t) => ({
         code: t.code,

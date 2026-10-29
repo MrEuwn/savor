@@ -54,4 +54,7 @@ def asset_url(key: str | None) -> str | None:
         return None
     if settings.storage_backend == "s3" and settings.s3_public_base_url:
         return f"{settings.s3_public_base_url.rstrip('/')}/{key}"
-    return f"{settings.assets_public_base.rstrip('/')}/{key}"
+    # ponytail: URL relatif /assets/<key> — tampil via origin mana pun
+    # (Next rewrite men-proxy ke backend). Tidak bergantung IP/tunnel.
+    # Upgrade: S3/CDN untuk aset publik publik.
+    return f"/assets/{key}"
