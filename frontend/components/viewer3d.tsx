@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import "@google/model-viewer";
 import { Button } from "@/components/ui";
 
 type Props = {
@@ -13,20 +12,44 @@ type Props = {
 export default function Viewer3D({ src, poster, name }: Props) {
   const ref = useRef<any>(null);
   const [failed, setFailed] = useState(false);
+  const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
+  // model-viewer hanya ada di browser (custom element, pakai window/self).
+  // Muat dinamis di effect => SSR aman (tanpa "self is not defined").
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        if (!customElements.get("model-viewer")) {
+          await import("@google/model-viewer");
+        }
+        if (!cancelled) setReady(true);
+      } catch {
+        if (!cancelled) setFailed(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
     const el = ref.current;
     if (!el) return;
     const onError = () => setFailed(true);
     const onLoad = () => setLoaded(true);
+    const onARFailed = () => setFailed(true);
     el.addEventListener("error", onError);
     el.addEventListener("load", onLoad);
+    el.addEventListener("ar-failed", onARFailed);
     return () => {
       el.removeEventListener("error", onError);
       el.removeEventListener("load", onLoad);
+      el.removeEventListener("ar-failed", onARFailed);
     };
-  }, []);
+  }, [ready]);
 
   const enterAR = () => {
     const el = ref.current;
