@@ -468,7 +468,7 @@ export default function DashboardPage() {
                     <span className={k.revoked_at ? "text-stone-400 line-through" : ""}>{k.label}</span>
                     <span className="ml-2 text-xs text-stone-500">
                       {k.revoked_at ? "Dicabut" : "Aktif"}
-                      {k.last_used_at ? ` · terakhir ${new Date(k.last_used_at).toLocaleDateString("id-ID")}` : ""}
+                      {k.last_used_at ? ` · terakhir ${k.last_used_at.slice(0, 10)}` : ""}
                     </span>
                   </span>
                   {!k.revoked_at && (
