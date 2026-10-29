@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Sync deps
+        working-directory: backend
+        run: uv sync
+      - name: Lint
+        working-directory: backend
+        run: uv run ruff check .
+      - name: Unit & integration tests
+        working-directory: backend
+        run: uv run pytest -q
