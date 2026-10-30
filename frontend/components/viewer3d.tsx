@@ -10,32 +10,17 @@ type Props = {
 };
 
 export default function Viewer3D({ src, poster, name }: Props) {
-  const wrapRef = useRef<HTMLDivElement>(null);
   const ref = useRef<any>(null);
-  const [visible, setVisible] = useState(false);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [secure, setSecure] = useState(true);
 
-  // Tunda import three.js/model-viewer sampai kartu masuk viewport.
-  // ponytail: satu viewer = satu WebGL context; batas browser ~8-16.
-  // Upgrade: virtualisasi daftar bila menu > 20 item.
+  // model-viewer hanya di browser (custom element, pakai window/self).
+  // Import dinamis sekali di mount => SSR aman.
+  // ponytail: tanpa lazy-viewport — IO+import race mematahkan mount (dev).
+  // Upgrade nanti: lazy per viewport bila menu 3D > 10 item.
   useEffect(() => {
-    const el = wrapRef.current;
-    if (!el || visible) return;
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setVisible(true)),
-      { rootMargin: "200px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [visible]);
-
-  // model-viewer hanya di browser (custom element, memakai window/self).
-  // Muat dinamis saat effect => SSR aman.
-  useEffect(() => {
-    if (!visible) return;
     let cancelled = false;
     setSecure(window.isSecureContext);
     (async () => {
@@ -99,9 +84,8 @@ export default function Viewer3D({ src, poster, name }: Props) {
   const arBlocked = !secure;
 
   return (
-    <div ref={wrapRef}>
-      {/* Poster tampil sebelum viewer aktif = LCP cepat tanpa three.js */}
-      <div className="relative">
+    <div>
+      <div className="relative h-64 w-full bg-stone-100">
         {ready ? (
           <model-viewer
             ref={ref}
@@ -112,16 +96,11 @@ export default function Viewer3D({ src, poster, name }: Props) {
             ar-modes="webxr scene-viewer quick-look"
             auto-rotate
             camera-controls
-            className="h-64 w-full bg-stone-100"
+            className="h-64 w-full"
           />
         ) : (
           poster && (
-            <img
-              src={poster}
-              alt={name}
-              className="h-64 w-full object-cover"
-              loading="lazy"
-            />
+            <img src={poster} alt={name} className="h-64 w-full object-cover" />
           )
         )}
         {ready && !loaded && (
