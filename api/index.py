@@ -59,7 +59,17 @@ def _seed_if_empty() -> None:
             async with AsyncClient(transport=transport, base_url="http://local") as c:
                 seed_base_url("http://local", client=c)
 
-        anyio.run(_do_seed)
+        # Vercel runtime sudah menjalankan event loop di thread ini —
+        # anyio.run() akan gagal "Already running asyncio". Deteksi & pakai
+        # loop yang ada; kalau tidak ada (lokal sinkron), buat sendiri.
+        import asyncio
+
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            anyio.run(_do_seed)
+        else:
+            asyncio.get_event_loop().run_until_complete(_do_seed())
         print("[seed] data demo penuh dibuat (tenant/meja/menu/aset)", flush=True)
     except Exception as e:  # pragma: no cover - jangan pernah gagalkan cold start
         print(f"[seed] skipped: {e}", flush=True)
