@@ -87,7 +87,7 @@ dengan iPhone LiDAR          lewat dashboard             Menu 3D muncul via AR
 Versi **lokal memiliki seluruh fitur tanpa batasan** (lihat catatan mode online
 di bagian bawah). Untuk Windows 10/11:
 
-1. **Download** - git clone https://github.com/MrEuwn/mejaar.git atau tombol
+1. **Download** - git clone https://github.com/MrEuwn/savor.git atau tombol
    Code -> Download ZIP lalu extract
 2. **Double-click start.bat** - script otomatis:
    - memasang Node.js & uv bila belum ada (via winget)
