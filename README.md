@@ -1,8 +1,12 @@
-# SAVOR
+<p align="center"><img src="docs/img/logo.jpg" width="104" alt="SAVOR"></p>
 
-**Smart AR Visualization for Optimized Restaurant ordering**
+<h1 align="center">SAVOR</h1>
 
-*Savor the sight before you order.*
+<p align="center"><img src="docs/img/logo.jpg" width="72" alt="SAVOR"></p>
+
+<p align="center"><b>Smart AR Visualization for Optimized Restaurant ordering</b></p>
+
+<p align="center"><i>Savor the sight before you order.</i></p>
 
 ![SAVOR - alur pemakaian lengkap dalam 60 detik](docs/img/savor-demo.gif)
 
@@ -154,19 +158,6 @@ sebagai fitur.*
 
 ---
 
-## Roadmap
-
-- [x] MVP: AR menu, dashboard, QR, sinkronisasi POS, analitik
-- [x] Deploy demo online
-- [ ] Notifikasi webhook bertanda tangan HMAC ke POS (P1)
-- [ ] Pipeline aset: hapus background otomatis + kompresi GLB/Draco (P1)
-- [ ] Rekonstruksi 3D langsung dari foto (P2)
-- [ ] Estimasi kalori on-device (diproses di HP, foto tak dikirim ke server) (P2)
-
-Daftar lengkap + status: docs/BACKLOG.md.
-
----
-
 ## Dokumentasi
 
 | Dokumen | Isi |
@@ -179,9 +170,9 @@ Daftar lengkap + status: docs/BACKLOG.md.
 | docs/TEST_REPORT.md | Semua hasil pengujian + cara mengulangnya |
 | docs/ASSETS.md | Kredit aset 3D & foto (CC0 / CC BY) |
 
-## Tim & Lisensi
+## Tim
 
-- **Tim**: [nama tim] - Prafasta Raditya Mahendra (NIM 25081010296) & anggota
+- **Tim**: Sembarang Wes
 - Aset 3D & foto memakai lisensi terbuka (CC0/CC BY) - kredit per file di
   docs/ASSETS.md
 - Kode proyek: lisensi MIT
