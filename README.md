@@ -8,74 +8,116 @@ Alur aset 3D ("replay mode"): kreator/company scan objek asli dengan iPhone
 LiDAR (Polycam/KIRI Engine) lalu **upload GLB** melalui dashboard. Pelanggan
 cukup melihat hasilnya di meja via AR.
 
-## Link demo
+---
 
-- Demo online: _(diisi saat deploy T12)_
-- Demo lokal: front http://localhost:3000 . API http://localhost:8000/docs
+## 🚀 Cara Menjalankan (3 langkah, tanpa install manual)
 
-## Akun demo
+> Prasyarat: Windows 10/11. Letakkan repo/zip di folder mana pun lalu:
 
-| Peran | Email | Password |
+### 1. Download project
+
+```bash
+git clone https://github.com/MrEuwn/mejaar.git
+cd mejaar
+```
+(atau tekan tombol hijau **Code → Download ZIP** lalu extract)
+
+### 2. Double-click `start.bat`
+
+Script akan otomatis:
+- cek & install **Node.js** dan **uv** (via winget, tanpa sentuhan manual)
+- install dependencies backend + frontend (hanya pertama kali, ±3 menit)
+- seed database demo (3 model 3D + menu makanan Indonesia + 2 meja)
+- nyalakan **backend :8000** dan **frontend :3000**
+- nyalakan **tunnel HTTPS** untuk AR di HP (window "MejaAR Tunnel")
+- tunggu semua benar-benar siap (health check) → **browser terbuka sendiri**
+
+> Kalau muncul "TUTUP jendela lalu double-click lagi": itu normal (PATH
+> baru terbaca setelah install Node/uv pertama kali). Tutup, buka lagi.
+
+### 3. Buka aplikasi
+
+| URL | Isi |
+|---|---|
+| `http://localhost:3000/login` | Dashboard pemilik — klik tombol **"Gunakan akun demo"** |
+| `http://localhost:3000/public/meja-aresto?table=T-01` | Menu publik pelanggan |
+| Window **"MejaAR Tunnel"** | URL `https://xxxx.trycloudflare.com` — buka dari HP untuk **AR** |
+
+** akun demo: `demo@mejaar.id` / `MejaAR-2026!`**
+
+### Menghentikan
+
+Double-click `stop.bat` (mematikan backend + frontend + tunnel sekaligus).
+
+---
+
+## 🔗 QR + AR (alur inti)
+
+1. Login dashboard → bagian **Tabel** → QR per meja tampil (bisa di-print).
+2. Pelanggan scan QR → menu publik (tanpa login, tanpa instal).
+3. Item 3D → tombol **"Lihat di Meja (AR)"** → kamera buka → porsi muncul
+   1:1 di meja (Android: Scene Viewer; iOS: AR Quick Look).
+4. Tanpa AR? Foto 2D otomatis jadi fallback.
+
+## 🧑‍🍳 Integrasi POS
+
+1. Dashboard → **Integrasi** → buat API key (tampil sekali, salin).
+2. POS kirim sinkronisasi dengan header `X-MejaAR-Key`:
+
+```
+POST /pos/menu-sync
+PATCH /pos/items/{external_id}/availability
+```
+
+3. Simulator: `python pos-simulator/pos_sim.py --api http://localhost:8000 --key <KEY>`
+
+Dokumentasi lengkap: Swagger di `/docs` atau `docs/API.md`.
+
+---
+
+## 📂 Struktur
+
+```
+backend/         FastAPI (Python 3.11, uv) - API + storage + 35 pytest
+frontend/        Next.js (App Router, TS, Tailwind, @google/model-viewer)
+pos-simulator/   Simulasi POS (menu-sync + toggle ketersediaan)
+tests/load/      Skrip k6 (uji beban)
+tools/           cloudflared.exe (tunnel HTTPS untuk AR di HP)
+start.bat        Jalankan semua layanan (double-click)
+stop.bat         Hentikan semua layanan (double-click)
+docs/            PRD, ARCHITECTURE, API, TEST_REPORT, USER_GUIDE,
+                 DECISIONS, ASSETS, BACKLOG
+docker-compose.yml   Postgres + Redis (prod/verify)
+```
+
+## ✅ Hasil pengujian
+
+| Uji | Hasil | Target |
 |---|---|---|
-| Pemilik restoran | `demo@mejaar.id` | `MejaAR-2026!` |
+| pytest | 35 passed | semua hijau |
+| ruff lint | clean | — |
+| k6 (20 VU / 30s) | p95 **99.75 ms** | < 300 ms |
+| Lighthouse | Perf 96 · A11y 100 · BP 96 · SEO 100 | mobile-first |
 
-(Tombol autofill "Gunakan akun demo" tersedia di halaman login.)
-Tenant demo: slug `meja-aresto`, meja `T-01`/`T-02`, 9 item menu (3 di antaranya
-bermodel 3D + 4 foto makanan Indonesia berlisensi CC - lihat `docs/ASSETS.md`).
+Detail + cara mengulang: `docs/TEST_REPORT.md`.
 
-## Menjalankan lokal
+## 📚 Dokumentasi
 
-**Cara termudah (Windows):** double-click **`start.bat`** di root repo.
-Script otomatis: cek & install Node.js + uv (via winget) → install dependencies
-→ seed DB demo → nyalakan backend + frontend → tunggu keduanya siap → buka
-browser. Tunnel HTTPS untuk AR di HP ikut jalan (window "MejaAR Tunnel" —
-bukalah untuk melihat URL `https://xxxx.trycloudflare.com`).
+| Dokumen | Isi |
+|---|---|
+| `docs/PRD.md` | Product requirements (UINIC 8.0) |
+| `docs/ARCHITECTURE.md` | Diagram + keputusan teknis |
+| `docs/DECISIONS.md` | Deviasi dari PRD + alasannya |
+| `docs/API.md` | Endpoint & contoh request |
+| `docs/USER_GUIDE.md` | Panduan pemakaian per peran |
+| `docs/ASSETS.md` | Attribution aset 3D & foto (CC) |
+| `docs/TEST_REPORT.md` | Bukti pengujian + cara mengulang |
 
-Manual:
+## 📄 Link demo online
 
-```bash
-# Backend (dev: SQLite otomatis)
-cd backend && uv sync && uv run uvicorn app.main:app --port 8000
+_(diisi saat deploy T12)_
 
-# Frontend (terminal kedua)
-cd frontend && npm ci && npm run dev   # http://localhost:3000
+## Lisensi aset
 
-# Seed data demo (opsional, reset konten)
-cd backend && uv run python seed_demo.py --api http://localhost:8000
-
-# Simulator POS (terminal ketiga)
-python pos-simulator/pos_sim.py --api http://localhost:8000 --key <API_KEY>
-```
-
-Login: `http://localhost:3000/login`. Halaman publik: `/public/meja-aresto?table=T-01`.
-AR bekerja via HTTPS atau localhost; di HP pakai URL tunnel dari `start.bat`
-atau URL demo online.
-
-## Struktur
-
-- `backend/` - FastAPI (Python 3.11, uv). API + storage aset + 35 pytest.
-- `frontend/` - Next.js (App Router, TS, Tailwind, @google/model-viewer).
-- `pos-simulator/` - Skrip simulasi POS (menu-sync + toggle ketersediaan).
-- `tests/load/` - Skrip k6 (uji beban endpoint publik).
-- `tools/` - cloudflared.exe (tunnel HTTPS untuk AR di HP via start.bat).
-- `start.bat` / `stop.bat` - Jalankan/hentikan semua layanan sekali double-click.
-- `docs/` - PRD.md, ARCHITECTURE.md, API.md, TEST_REPORT.md, USER_GUIDE.md,
-  DECISIONS.md, ASSETS.md, BACKLOG.md.
-- `docker-compose.yml` - Postgres + Redis (prod/verify).
-
-## Tes
-
-```bash
-cd backend && uv run pytest -q          # 35 passed
-cd backend && uv run ruff check .       # clean
-k6 run tests/load/public_menu.js        # p95 ~100 ms (target < 300 ms)
-```
-
-Lighthouse (halaman publik, production build): Performance 96 - Accessibility 100 -
-Best Practices 96 - SEO 100. Detail dan cara mengulang: `docs/TEST_REPORT.md`.
-
-## Dokumentasi
-
-- Arsitektur & keputusan: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`
-- API: `docs/API.md` dan Swagger di `/docs`
-- Panduan pemakaian: `docs/USER_GUIDE.md`
+Model 3D & foto makanan memakai sumber berlisensi terbuka (CC0/CC BY) —
+kredit lengkap di `docs/ASSETS.md`.
