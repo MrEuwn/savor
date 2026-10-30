@@ -20,3 +20,5 @@ k6-results/
 .DS_Store
 coverage/
 docs/PROPOSAL_UINIC8.md
+
+.vercel

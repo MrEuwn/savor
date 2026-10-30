@@ -47,19 +47,37 @@ def _seed_if_empty() -> None:
             db.close()
 
         # Tenant belum ada → jalankan seed (import inline; httpx tersedia)
-        import subprocess
+        # Seed inline via httpx ASGI (async transport; httpx modern)
+        import anyio
 
-        subprocess.run(
-            [sys.executable, os.path.join(BACKEND, "seed_demo.py"),
-             "--api", "http://127.0.0.1:3000"],
-            check=False, timeout=120,
-        )
+        from httpx import ASGITransport, AsyncClient
+
+        async def _do_seed() -> None:
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://local"
+            ) as c:
+                await c.post("/auth/register-tenant", json={
+                    "name": "SAVOR Aresto (Demo)",
+                    "email": "demo@savor.id",
+                    "password": "SAVOR-2026!",
+                    "slug": "meja-aresto",
+                })
+
+        anyio.run(_do_seed)
+        print("[seed] tenant demo dibuat", flush=True)
     except Exception as e:  # pragma: no cover - jangan pernah gagalkan cold start
         print(f"[seed] skipped: {e}", flush=True)
 
 
+_seed_done = False
+
+
 @app.on_event("startup")
 def _warm() -> None:
+    global _seed_done
+    if _seed_done:
+        return
+    _seed_done = True
     _seed_if_empty()
 
 
