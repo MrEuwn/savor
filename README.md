@@ -1,123 +1,182 @@
-# MejaAR
+# SAVOR
 
-Menu restoran dengan AR: pelanggan scan QR di meja, melihat porsi makanan dalam
-3D/AR langsung di browser HP, tanpa instal aplikasi. Tujuan: mengurangi
-pesanan berlebih dan sisa makanan (SDG 12.3). Proyek UINIC 8.0 WebDev.
+**Smart AR Visualization for Optimized Restaurant ordering**
 
-Alur aset 3D ("replay mode"): kreator/company scan objek asli dengan iPhone
-LiDAR (Polycam/KIRI Engine) lalu **upload GLB** melalui dashboard. Pelanggan
-cukup melihat hasilnya di meja via AR.
+*Savor the sight before you order.*
+
+SAVOR membantu restoran menurunkan sisa makanan (food waste) dengan cara
+sederhana namun powerful: pelanggan melihat **porsi makanan dalam ukuran asli
+(1:1) langsung di atas meja mereka** lewat Augmented Reality - cukup scan QR,
+tanpa install aplikasi apa pun.
+
+Masalahnya mudah dipahami siapa pun yang pernah makan di restoran: foto menu
+selalu membuat porsi terlihat lebih besar dari kenyataan. Pelanggan memesan
+lebih banyak dari yang sanggup dimakan, makanan tersisa, terbuang. SAVOR
+mengganti foto dengan model 3D hasil scan benda asli, sehingga yang dilihat
+pelanggan = yang akan datang ke meja. Target: **SDG 12.3** (memangkas food
+waste hingga 50% pada 2030).
+
+> Proyek untuk **UINIC 8.0 - Web Development Competition**
+> Tema: *Engineering Interconnected Web Solutions to Empower Digital Ecosystems*
+> Subtema: *Lingkungan*
 
 ---
 
-## 🚀 Cara Menjalankan (3 langkah, tanpa install manual)
+## Demo Online (dapat langsung dibuka juri)
 
-> Prasyarat: Windows 10/11. Letakkan repo/zip di folder mana pun lalu:
-
-### 1. Download project
-
-```bash
-git clone https://github.com/MrEuwn/mejaar.git
-cd mejaar
-```
-(atau tekan tombol hijau **Code → Download ZIP** lalu extract)
-
-### 2. Double-click `start.bat`
-
-Script akan otomatis:
-- cek & install **Node.js** dan **uv** (via winget, tanpa sentuhan manual)
-- install dependencies backend + frontend (hanya pertama kali, ±3 menit)
-- seed database demo (3 model 3D + menu makanan Indonesia + 2 meja)
-- nyalakan **backend :8000** dan **frontend :3000**
-- nyalakan **tunnel HTTPS** untuk AR di HP (window "MejaAR Tunnel")
-- tunggu semua benar-benar siap (health check) → **browser terbuka sendiri**
-
-> Kalau muncul "TUTUP jendela lalu double-click lagi": itu normal (PATH
-> baru terbaca setelah install Node/uv pertama kali). Tutup, buka lagi.
-
-### 3. Buka aplikasi
-
-| URL | Isi |
+| Apa | Link |
 |---|---|
-| `http://localhost:3000/login` | Dashboard pemilik — klik tombol **"Gunakan akun demo"** |
-| `http://localhost:3000/public/meja-aresto?table=T-01` | Menu publik pelanggan |
-| Window **"MejaAR Tunnel"** | URL `https://xxxx.trycloudflare.com` — buka dari HP untuk **AR** |
+| Menu publik pelanggan (buka dari HP!) | https://frontend-ecru-nine-78msnkzo1b.vercel.app/public/meja-aresto?table=T-01 |
+| Dashboard pemilik restoran | https://frontend-ecru-nine-78msnkzo1b.vercel.app/login |
+| API docs (Swagger) | https://savor-api2.vercel.app/docs |
 
-** akun demo: `demo@mejaar.id` / `MejaAR-2026!`**
+**Akun demo:** demo@savor.id / SAVOR-2026! *(atau klik tombol "Gunakan akun
+demo" di halaman login - terisi otomatis)*
 
-### Menghentikan
+**Cara merasakan AR (30 detik):**
+1. Buka link "Menu publik" dari **HP** (bukan laptop)
+2. Scroll ke *Burger Beef Klasik* -> ketuk **"Lihat di Meja (AR)"**
+3. Arahkan kamera ke lantai/meja -> burger ukuran asli muncul di depanmu
+4. Putar, dekati, bandingkan dengan piring - itulah porsi yang akan datang
 
-Double-click `stop.bat` (mematikan backend + frontend + tunnel sekaligus).
-
----
-
-## 🔗 QR + AR (alur inti)
-
-1. Login dashboard → bagian **Tabel** → QR per meja tampil (bisa di-print).
-2. Pelanggan scan QR → menu publik (tanpa login, tanpa instal).
-3. Item 3D → tombol **"Lihat di Meja (AR)"** → kamera buka → porsi muncul
-   1:1 di meja (Android: Scene Viewer; iOS: AR Quick Look).
-4. Tanpa AR? Foto 2D otomatis jadi fallback.
-
-## 🧑‍🍳 Integrasi POS
-
-1. Dashboard → **Integrasi** → buat API key (tampil sekali, salin).
-2. POS kirim sinkronisasi dengan header `X-MejaAR-Key`:
-
-```
-POST /pos/menu-sync
-PATCH /pos/items/{external_id}/availability
-```
-
-3. Simulator: `python pos-simulator/pos_sim.py --api http://localhost:8000 --key <KEY>`
-
-Dokumentasi lengkap: Swagger di `/docs` atau `docs/API.md`.
+*Di laptop, 3D tetap bisa diputar 360 derajat sebagai pratinjau; tombol AR
+aktif saat dibuka dari HP (butuh kamera).*
 
 ---
 
-## 📂 Struktur
+## Cara Kerja (versi singkat)
 
 ```
-backend/         FastAPI (Python 3.11, uv) - API + storage + 35 pytest
-frontend/        Next.js (App Router, TS, Tailwind, @google/model-viewer)
-pos-simulator/   Simulasi POS (menu-sync + toggle ketersediaan)
-tests/load/      Skrip k6 (uji beban)
-tools/           cloudflared.exe (tunnel HTTPS untuk AR di HP)
-start.bat        Jalankan semua layanan (double-click)
-stop.bat         Hentikan semua layanan (double-click)
-docs/            PRD, ARCHITECTURE, API, TEST_REPORT, USER_GUIDE,
-                 DECISIONS, ASSETS, BACKLOG
-docker-compose.yml   Postgres + Redis (prod/verify)
+[Kreator mitra]              [Restoran]                  [Pelanggan]
+Scan makanan asli        ->  Upload file 3D (GLB)   ->   Scan QR di meja
+dengan iPhone LiDAR          lewat dashboard             Menu 3D muncul via AR
+(aplikasi Polycam)           (2 menit per menu)          di browser HP-nya
 ```
 
-## ✅ Hasil pengujian
+- **Pemilik restoran** login ke dashboard: kelola menu, upload model 3D & foto,
+  generate QR per meja (siap print), lihat statistik menu mana yang paling
+  menarik perhatian pelanggan.
+- **Sistem kasir (POS) terhubung**: saat dapur kehabisan suatu menu, staf
+  cukup menandainya di kasir -> menu di semua meja otomatis muncul tanda
+  **"Sementara Habis"** dalam hitungan detik.
+- **Pelanggan** tidak perlu akun, tidak perlu install - scan dan langsung
+  melihat.
 
-| Uji | Hasil | Target |
+---
+
+## Fitur
+
+| Fitur | Keterangan |
+|---|---|
+| AR tanpa aplikasi | Jalan di browser HP (Scene Viewer Android / Quick Look iOS) - teknologi bawaan, nol friksi |
+| Porsi 1:1 sebenarnya | Model 3D berukuran asli; pelanggan membandingkan langsung dengan meja/piring |
+| Sinkron kasir (POS) | API ber-key: ketersediaan menu tersinkron dengan stok dapur secara real-time |
+| QR per meja | Generate & print QR dari dashboard; setiap meja punya menu sendiri |
+| Statistik minat | Menu mana paling dilihat & paling di-AR - dasar keputusan daftar menu (tanpa data pribadi pelanggan) |
+| Aksesibel & cepat | Lighthouse: Performance 96, Accessibility 100, Best Practices 96, SEO 100 |
+| Fallback 2D | Perangkat tak mendukung AR? Foto asli otomatis menggantikan - semua orang terlayani |
+
+---
+
+## Menjalankan versi lokal (satu klik!)
+
+Versi **lokal memiliki seluruh fitur tanpa batasan** (lihat catatan mode online
+di bagian bawah). Untuk Windows 10/11:
+
+1. **Download** - git clone https://github.com/MrEuwn/mejaar.git atau tombol
+   Code -> Download ZIP lalu extract
+2. **Double-click start.bat** - script otomatis:
+   - memasang Node.js & uv bila belum ada (via winget)
+   - memasang dependencies + data demo (hanya kali pertama)
+   - menjalankan backend, frontend, dan tunnel HTTPS untuk AR di HP
+   - membuka browser begitu semuanya siap
+3. **Selesai** - halaman login terbuka. Klik "Gunakan akun demo".
+
+Menghentikan: double-click stop.bat.
+
+<details>
+<summary>Prefer cara manual? (klik untuk buka)</summary>
+
+```
+cd backend  && uv sync && uv run uvicorn app.main:app --port 8000   # API :8000
+cd frontend && npm install && npm run dev                            # Web :3000
+# data demo: cd backend && uv run python seed_demo.py
+```
+</details>
+
+---
+
+## Bagaimana SAVOR dibangun (ikhtisar untuk yang penasaran)
+
+SAVOR adalah aplikasi web **multi-tenant** (satu server, banyak restoran, data
+masing-masing terisolasi dan diuji otomatis), terdiri dari:
+
+- **Frontend** - Next.js + TypeScript + Tailwind CSS. Halaman menu publik
+  mobile-first; 3D & AR memakai standar web terbuka via @google/model-viewer
+  (WebXR / AR Quick Look / Scene Viewer).
+- **Backend** - FastAPI (Python) dengan struktur modular (router, service,
+  repository, schema). REST API yang sama dipakai dashboard web dan sistem
+  POS - inilah "interconnected" dalam tema kompetisi.
+- **Keamanan** - password di-hash (argon2), sesi JWT + refresh token, API key
+  ter-hash untuk mesin, validasi upload (magic bytes, bukan sekadar ekstensi
+  file), rate limiting, security headers, isolasi data antar tenant.
+- **Kualitas terukur** - 35 unit test otomatis (pytest), lint bersih (ruff),
+  uji beban k6 (p95 = 100 ms pada 20 pengguna virtual, target < 300 ms).
+  Semua angka dapat direproduksi - lihat docs/TEST_REPORT.md.
+- **Siap produksi** - Docker Compose tersedia (PostgreSQL + Redis); mode
+  pengembangan otomatis memakai SQLite agar nol-friction.
+
+Penjelasan arsitektur lengkap: docs/ARCHITECTURE.md.
+
+---
+
+## Dua mode penayangan: lokal lengkap vs online demo
+
+|  | Mode Lokal (start.bat) | Mode Online (link demo) |
 |---|---|---|
-| pytest | 35 passed | semua hijau |
-| ruff lint | clean | — |
-| k6 (20 VU / 30s) | p95 **99.75 ms** | < 300 ms |
-| Lighthouse | Perf 96 · A11y 100 · BP 96 · SEO 100 | mobile-first |
+| Fungsi inti (menu, QR, AR, statistik) | lengkap | berfungsi |
+| Upload model/foto persisten | tersimpan | sementara (demo pakai data awal) |
+| Integrasi POS & simulator | ya | ya |
+| Data tersimpan antar sesi | ya | di-seed ulang otomatis |
 
-Detail + cara mengulang: `docs/TEST_REPORT.md`.
+**Kenapa ada perbedaan?** Versi online sengaja di-deploy di platform gratis
+**tanpa kartu kredit** (Vercel serverless) dengan penyimpanan sementara -
+cukup untuk menunjukkan seluruh alur produk. Secara arsitektur, SAVOR siap
+memakai database terkelola (PostgreSQL) dan object storage (S3) hanya dengan
+mengganti variabel lingkungan; penjelasan jujurnya ada di docs/DECISIONS.md -
+sesuai prinsip kompetisi: *yang belum teruji ditulis sebagai roadmap, bukan
+sebagai fitur.*
 
-## 📚 Dokumentasi
+---
+
+## Roadmap
+
+- [x] MVP: AR menu, dashboard, QR, sinkronisasi POS, analitik
+- [x] Deploy demo online
+- [ ] Notifikasi webhook bertanda tangan HMAC ke POS (P1)
+- [ ] Pipeline aset: hapus background otomatis + kompresi GLB/Draco (P1)
+- [ ] Rekonstruksi 3D langsung dari foto (P2)
+- [ ] Estimasi kalori on-device (diproses di HP, foto tak dikirim ke server) (P2)
+
+Daftar lengkap + status: docs/BACKLOG.md.
+
+---
+
+## Dokumentasi
 
 | Dokumen | Isi |
 |---|---|
-| `docs/PRD.md` | Product requirements (UINIC 8.0) |
-| `docs/ARCHITECTURE.md` | Diagram + keputusan teknis |
-| `docs/DECISIONS.md` | Deviasi dari PRD + alasannya |
-| `docs/API.md` | Endpoint & contoh request |
-| `docs/USER_GUIDE.md` | Panduan pemakaian per peran |
-| `docs/ASSETS.md` | Attribution aset 3D & foto (CC) |
-| `docs/TEST_REPORT.md` | Bukti pengujian + cara mengulang |
+| docs/PRD.md | Product requirements (sumber kebenaran proyek) |
+| docs/ARCHITECTURE.md | Diagram arsitektur & keputusan teknis |
+| docs/DECISIONS.md | Setiap deviasi dari PRD + alasannya (transparansi) |
+| docs/API.md | Referensi endpoint & contoh |
+| docs/USER_GUIDE.md | Panduan pengguna per peran (pemilik/staf/pelanggan) |
+| docs/TEST_REPORT.md | Semua hasil pengujian + cara mengulangnya |
+| docs/ASSETS.md | Kredit aset 3D & foto (CC0 / CC BY) |
 
-## 📄 Link demo online
+## Tim & Lisensi
 
-_(diisi saat deploy T12)_
-
-## Lisensi aset
-
-Model 3D & foto makanan memakai sumber berlisensi terbuka (CC0/CC BY) —
-kredit lengkap di `docs/ASSETS.md`.
+- **Tim**: [nama tim] - Prafasta Raditya Mahendra (NIM 25081010296) & anggota
+- Aset 3D & foto memakai lisensi terbuka (CC0/CC BY) - kredit per file di
+  docs/ASSETS.md
+- Kode proyek: lisensi MIT

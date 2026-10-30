@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Box, Search, Utensils } from "lucide-react";
+import { Search, Utensils } from "lucide-react";
 import Viewer3D from "@/components/viewer3d";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 export type PublicItem = {
@@ -63,11 +64,9 @@ export default function PublicMenu({
       <header className="mb-6 border-b border-stone-100 pb-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-ink-black text-paper-white">
-              <Box className="h-3.5 w-3.5 stroke-[2.2]" />
-            </div>
+            <Logo size={28} className="rounded-lg shadow-2xs" />
             <span className="font-serif text-xs font-normal tracking-tight text-ink-black">
-              MejaAR
+              SAVOR
             </span>
           </div>
 

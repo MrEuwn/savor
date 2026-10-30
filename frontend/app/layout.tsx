@@ -17,8 +17,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "MejaAR — Augmented Dining Platform",
+  title: "SAVOR — Smart AR Visualization for Optimized Restaurant Ordering",
   description: "Menu digital restoran dengan visualisasi porsi Augmented Reality untuk mengurangi food waste",
+  icons: {
+    icon: "/images/logo/logo.jpeg",
+  },
 };
 
 export default function RootLayout({

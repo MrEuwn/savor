@@ -1,0 +1,30 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Dependensi backend
+COPY backend/pyproject.toml /app/backend/pyproject.toml
+COPY backend/README.md* /app/backend/
+RUN pip install --no-cache-dir "fastapi>=0.116,<1" "uvicorn[standard]>=0.34" \
+    "sqlalchemy>=2.0,<3" "pydantic[email]>=2" "pydantic-settings>=2" \
+    "argon2-cffi" "python-jose[cryptography]" "slowapi" "httpx" "alembic"
+
+# Kode backend
+COPY backend/app /app/backend/app
+
+# Aset demo (foto + GLB) untuk seeding
+COPY frontend/public/assets /app/assets
+
+# Startup: nyalakan API -> seed demo sekali (idempoten) -> jaga proses utama
+RUN printf '#!/bin/sh\nuvicorn app.main:app --host 0.0.0.0 --port 7860 &\nAPID=$!\nsleep 6\npython seed_demo.py --api http://127.0.0.1:7860 --assets /app/assets || true\nwait $APID\n' > /app/boot.sh && chmod +x /app/boot.sh
+COPY backend/seed_demo.py /app/seed_demo.py
+
+ENV DATABASE_URL="sqlite:////app/savor.db"
+ENV ASSETS_PUBLIC_BASE="/assets"
+ENV STORAGE_BACKEND="local"
+ENV STORAGE_LOCAL_DIR="/app/storage"
+# CORS diisi lewat Space secret/variable: CORS_ORIGINS=https://<user>.hf.space,http://localhost:3000
+ENV CORS_ORIGINS="*"
+
+EXPOSE 7860
+CMD ["/bin/sh", "/app/boot.sh"]

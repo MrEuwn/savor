@@ -26,7 +26,15 @@ from .storage import _storage_root
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="MejaAR API", version="0.1.0")
+    app = FastAPI(title="SAVOR API", version="0.1.0")
+
+    # Auto-migrate ringan untuk deploy (Render free): tabel dibuat bila belum ada.
+    # Produksi serius tetap pakai Alembic; ini hanya Safety-net seeding awal.
+    from .db import Base
+
+    @app.on_event("startup")
+    def _create_tables() -> None:
+        Base.metadata.create_all(bind=engine)
 
     @app.middleware("http")
     async def security_headers(request, call_next):

@@ -1,0 +1,108 @@
+# ================= SAVOR — Checklist Deploy Online =================
+# Estimasi total: 30-45 menit. Butuh: akun GitHub (sudah ada), browser.
+# Semua gratis, tanpa kartu kredit.
+#
+# Setelah selesai, isi:
+#   URL_FRONTEND = ____________________  (https://savor-xxx.vercel.app)
+#   URL_BACKEND  = ____________________  (https://savor-api-xxx.onrender.com)
+# Lalu simpan file ini, push (env values TIDAK masuk kode — aman).
+
+--------------------------------------------------------------------
+LANGKAH 1 — RENDER (Backend API)                    ±15 menit
+--------------------------------------------------------------------
+1. Buka https://dashboard.render.com  → Sign in dengan GitHub.
+2. Klik "New +" → pilih "Blueprint".
+3. Pilih repository: MrEuwn/mejaar  → Connect.
+   (Render otomatis baca file render.yaml yang sudah kusediakan.)
+4. Saat diminta isi variabel "CORS_ORIGINS": isi dulu sementara:
+       http://localhost:3000
+   (kita ganti lagi setelah tahu URL Vercel — Langkah 3 no.5)
+5. Klik "Apply" → tunggu build selesai (±5-10 menit, log bisa dilihat).
+6. Kalau build sukses → buka tab "Shell" di dashboard Render → jalankan:
+       cd /opt/render/project/src/backend && uv run python seed_demo.py --api http://localhost:10000
+   (isi tenant, menu, GLB, meja T-01/T-02 — sekali saja)
+7. Catat URL backend-mu, contoh: https://savor-api-xxxx.onrender.com
+   → inilah URL_BACKEND.
+8. Tes: buka URL_BACKEND/healthz → harus tampil {"status":"ok"}.
+9. Penting (free tier): Render sleep setelah 15 menit idle. Supaya
+   tetap bangun saat demo, buat akun di https://cron-job.org (gratis)
+   → buat job tiap 10 menit → URL: URL_BACKEND/healthz.
+
+--------------------------------------------------------------------
+LANGKAH 2 — VERCEL (Frontend)                       ±10 menit
+--------------------------------------------------------------------
+1. Buka https://vercel.com → Sign in dengan GitHub.
+2. "Add New..." → "Project" → pilih repo MrEuwn/mejaar → Import.
+3. Sebelum Deploy:
+   - Root Directory: klik "Edit" → pilih  frontend
+   - Framework Preset: Next.js (deteksi otomatis)
+   - Build Command: (biarkan default)
+   - Environment Variables → tambah SATU variabel:
+       Name : API_BASE_SERVER
+       Value: URL_BACKEND  (dari Langkah 1 no.7, tanpa slash di akhir)
+4. Klik "Deploy" → tunggu ±2-3 menit.
+5. Catat URL yang diberikan, contoh: https://mejaar-xxx.vercel.app
+   → inilah URL_FRONTEND.
+
+--------------------------------------------------------------------
+LANGKAH 3 — SATUKAN KEDUANYA                        ±5 menit
+--------------------------------------------------------------------
+1. Buka dashboard Render → service savor-api → Environment.
+2. Ubah variabel CORS_ORIGINS menjadi (satu baris, dipisah koma):
+       https://URL_FRONTEND_KAMU,http://localhost:3000
+   contoh:
+       https://mejaar-xxx.vercel.app,http://localhost:3000
+3. Klik "Save Changes" (service restart otomatis, ±1 menit).
+4. (Opsional tapi disarankan) Tambah env di Vercel lalu redeploy:
+       Name : NEXT_PUBLIC_PUBLIC_BASE
+       Value: URL_FRONTEND_KAMU
+   Supaya QR di dashboard menunjuk domain online (bisa discan HP).
+5. Tes akhir:
+   a. Buka URL_FRONTEND  → login: demo@savor.id / SAVOR-2026!
+   b. Dashboard tampil menu + QR ✓
+   c. Buka URL_FRONTEND/public/meja-aresto?table=T-01 di HP →
+      3D tampil → tombol "Lihat di Meja (AR)" aktif (HTTPS ✓)
+   d. Scan QR dari HP → halaman menu online terbuka.
+
+--------------------------------------------------------------------
+SETELAH DEPLOY — jangan lupa
+--------------------------------------------------------------------
+[ ] Isi "Link demo online" di README.md dengan URL_FRONTEND
+[ ] Isi URL di docs/PROPOSAL_UINIC8.md (bagian Lampiran > Tautan)
+[ ] Screenshot halaman untuk proposal (bagian UI/UX Preview)
+[ ] Submit: PDF proposal + URL_FRONTEND + github.com/MrEuwn/mejaar
+    ke Google Forms panitia sebelum 30 Okt 2026 23.59 WIB
+
+====================================================================
+ALTERNATIF B — HUGGING FACE SPACES (BILA RENDER MEMINTA KARTU)
+====================================================================
+Gratis 100%, tanpa kartu kredit, sleep hanya setelah 48 jam idle.
+File Dockerfile.hf sudah disiapkan di repo.
+
+1. Daftar/login: https://huggingface.co (pakai email/GitHub).
+2. Klik "New Space":
+   - Space name : savor-api
+   - SDK        : Docker
+   - Visibility : Public (wajib untuk free; jangan taruh secret dalam kode)
+3. Space dibuat → tab "Files" → "Add file" → "Upload files".
+   Upload struktur berikut (pertahankan path):
+     Dockerfile.hf            → ubah nama jadi "Dockerfile" saat upload
+     backend/app/**           (seluruh isi folder app)
+     backend/pyproject.toml
+     backend/seed_demo.py
+     frontend/public/assets/**  (foto + GLB)
+   ATAU cara lebih mudah: clone Space via git:
+     git clone https://huggingface.co/spaces/<username>/savor-api
+     salin file di atas ke dalamnya, lalu:
+     git add . && git commit -m "SAVOR API" && git push
+4. Tunggu build (±3-5 menit, log terlihat di tab "Logs").
+5. URL backend Anda: https://<username>-savor-api.hf.space
+   Tes: buka https://<username>-savor-api.hf.space/healthz
+6. Langkah 2 & 3 di atas (Vercel + CORS) tetap sama, hanya
+   ganti URL_BACKEND dengan URL hf.space Anda.
+
+Catatan HF Spaces:
+- Public Space = semua bisa membaca kode & DB. Jangan simpan
+  secret di file. JWT_SECRET sudah otomatis random per build; untuk
+  stabil, set di Settings > Variables (secret).
+- Sleep 48 jam; cukup buka /healthz satu kali sebelum demo.

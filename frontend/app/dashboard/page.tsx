@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  Box,
   Plus,
   Trash2,
   Upload,
@@ -19,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Logo } from "@/components/logo";
 import { apiFetch, clearAuth, errMsg, getAuth } from "@/lib/api";
 
 type MenuItem = {
@@ -295,9 +295,7 @@ export default function DashboardPage() {
       <header className="sticky top-0 z-20 border-b border-stone-200/70 bg-paper-white/95 backdrop-blur-md px-6 py-3.5">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink-black text-paper-white">
-              <Box className="h-4 w-4 stroke-[2.2]" />
-            </div>
+            <Logo size={36} className="rounded-xl shadow-xs" />
             <div>
               <span className="font-serif text-base font-normal tracking-tight text-ink-black block leading-none">
                 {restaurantName || "MejaAR"}

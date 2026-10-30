@@ -1,4 +1,4 @@
-# MejaAR - Backlog (kerjakan berurutan; centang setelah terverifikasi)
+# SAVOR - Backlog (kerjakan berurutan; centang setelah terverifikasi)
 
 Sumber: docs/PRD.md bagian 3/5. Deviasi keputusan: docs/DECISIONS.md.
 

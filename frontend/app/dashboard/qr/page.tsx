@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Printer, Box, QrCode } from "lucide-react";
+import { ArrowLeft, Printer, QrCode } from "lucide-react";
 import { apiFetch, getAuth } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/logo";
 
 type TableCode = { id: number; code: string };
 
@@ -155,11 +156,9 @@ export default function PrintQrPage() {
                   {/* Brand Header */}
                   <div className="w-full flex items-center justify-between border-b border-stone-100 pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-6 w-6 items-center justify-center rounded bg-ink-black text-paper-white print:border print:border-black">
-                        <Box className="h-3.5 w-3.5 stroke-[2.2]" />
-                      </div>
+                      <Logo size={24} className="rounded" />
                       <span className="font-serif text-xs font-normal tracking-tight">
-                        MejaAR
+                        SAVOR
                       </span>
                     </div>
                     <span className="text-[11px] font-medium text-slate-gray">

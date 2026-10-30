@@ -12,9 +12,13 @@ venv/
 .ruff_cache/
 .env
 *.db
+test_storage/
 storage/*
 !storage/.gitkeep
 .lighthouse/
 k6-results/
 .DS_Store
 coverage/
+docs/PROPOSAL_UINIC8.md
+
+.vercel

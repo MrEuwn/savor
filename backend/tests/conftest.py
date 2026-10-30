@@ -6,7 +6,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-os.environ["DATABASE_URL"] = "sqlite:///./test_meaar.db"
+os.environ["DATABASE_URL"] = "sqlite:///./test_savor.db"
 os.environ["JWT_SECRET"] = "test-secret-0123456789-0123456789"
 os.environ["STORAGE_LOCAL_DIR"] = "./test_storage"
 os.environ["ASSETS_PUBLIC_BASE"] = "http://testserver/assets"

@@ -1,12 +1,15 @@
 // Server-only (SSR fetches page.tsx pakai ini, absolute ke backend).
+// Prioritas: API_BASE_SERVER (env runtime Vercel) -> NEXT_PUBLIC_API_BASE -> local.
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+  process.env.API_BASE_SERVER ||
+  process.env.NEXT_PUBLIC_API_BASE ||
+  "http://localhost:8000";
 
 // Browser (client) pakai relative "/api" → di-proxy Next ke backend,
 // sehingga pengunjung HP di balik tunnel tidak menjangkau IP laptop.
 const API_BASE_B = "/api";
 
-const KEY = "mejaar";
+const KEY = "savor";
 
 export type Auth = {
   access_token: string;

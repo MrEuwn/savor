@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Box, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { apiFetch, saveAuth, errMsg } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Logo } from "@/components/logo";
 
 type Mode = "login" | "register";
 
@@ -54,30 +55,42 @@ export default function LoginPage() {
     }
   };
 
+  const useDemoAccount = () => {
+    setEmail("demo@savor.id");
+    setPassword("SAVOR-2026!");
+  };
+
   return (
     <main className="min-h-screen w-full bg-paper-white selection:bg-blush-peach selection:text-sienna-brown">
       {/* Responsive Split Container */}
       <div className="flex min-h-screen w-full flex-col lg:grid lg:grid-cols-12">
         {/* Kolom Kiri: Visual 3D Background & Headline */}
-        <section className="relative hidden lg:flex min-h-80 sm:min-h-100 lg:min-h-screen lg:col-span-6 xl:col-span-6 flex-col justify-between overflow-hidden p-6 sm:p-10 lg:p-12 xl:p-16 text-paper-white">
+        <section className="relative flex min-h-[320px] sm:min-h-[400px] lg:min-h-screen lg:col-span-6 xl:col-span-6 flex-col justify-between overflow-hidden p-6 sm:p-10 lg:p-12 xl:p-16 text-paper-white">
           {/* Background 3D Image */}
           <div className="absolute inset-0 z-0">
             <Image
               src="/images/auth-3d-bg.jpg"
-              alt="Visualisasi 3D MejaAR"
+              alt="Visualisasi 3D SAVOR"
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover object-center brightness-[0.88] contrast-[1.08]"
             />
             {/* Subtle dark gradient overlay untuk legibilitas teks */}
-            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/25" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/25" />
           </div>
 
+          {/* Top Brand / Quote Tag */}
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[11px] font-medium tracking-wider uppercase text-white/90 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span>3D & AR Portions</span>
+            </div>
+          </div>
 
           {/* Bottom Hero Typography (Fluid & Responsive, auto-aligned to bottom) */}
           <div className="relative z-10 mt-auto pt-10 lg:pt-16">
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl font-normal leading-[1.15] tracking-tight text-paper-white text-balance">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl font-normal leading-[1.15] tracking-tight text-paper-white [text-wrap:balance]">
               Porsi Nyata
               <br />
               Sebelum Dipesan
@@ -93,12 +106,10 @@ export default function LoginPage() {
         <section className="flex flex-1 flex-col justify-between bg-paper-white px-6 py-8 sm:px-10 sm:py-12 lg:col-span-6 xl:col-span-6 lg:min-h-screen lg:px-12 xl:px-16">
           {/* Top Logo / Brand Header */}
           <div className="flex items-center justify-end">
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-ink-black text-paper-white">
-                <Box className="h-4 w-4 stroke-[2.2]" />
-              </div>
+            <div className="flex items-center gap-2.5">
+              <Logo size={28} className="rounded-lg shadow-xs" />
               <span className="font-serif text-base font-normal tracking-tight text-ink-black">
-                MejaAR
+                SAVOR
               </span>
             </div>
           </div>
@@ -263,7 +274,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={busy}
-                className="mt-3 w-full min-h-12 rounded-[14px] bg-ink-black text-paper-white hover:bg-ink-black/90 text-sm font-medium transition-all"
+                className="mt-3 w-full min-h-[48px] rounded-[14px] bg-ink-black text-paper-white hover:bg-ink-black/90 text-sm font-medium transition-all"
               >
                 {busy
                   ? "Memproses..."
@@ -271,6 +282,17 @@ export default function LoginPage() {
                     ? "Masuk"
                     : "Daftar Akun"}
               </Button>
+
+              {/* Quick Demo Account Button (from origin/main) */}
+              {mode === "login" && (
+                <button
+                  type="button"
+                  onClick={useDemoAccount}
+                  className="w-full rounded-[14px] border border-dashed border-stone-300 py-2.5 text-xs text-slate-gray transition-colors hover:border-ink-black hover:text-ink-black cursor-pointer"
+                >
+                  Gunakan akun demo (demo@savor.id)
+                </button>
+              )}
             </form>
           </div>
 

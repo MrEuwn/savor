@@ -1,4 +1,4 @@
-# MejaAR - Keputusan & Deviasi
+# SAVOR - Keputusan & Deviasi
 
 Dokumentasikan di sini setiap keputusan yang menyimpang dari pilihan terkunci di PRD
 serta alasan teknisnya. Format: tanggal - keputusan - alasan.
