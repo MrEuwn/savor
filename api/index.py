@@ -28,7 +28,7 @@ from app.main import create_app  # noqa: E402
 app = create_app()
 
 
-# ---- Auto-seed idempoten saat cold start (data hilang di /tmp) ----
+# ---- Auto-seed penuh idempoten saat cold start (data hilang di /tmp) ----
 def _seed_if_empty() -> None:
     try:
         from sqlalchemy import select
@@ -46,25 +46,21 @@ def _seed_if_empty() -> None:
         finally:
             db.close()
 
-        # Tenant belum ada → jalankan seed (import inline; httpx tersedia)
-        # Seed inline via httpx ASGI (async transport; httpx modern)
+        # Seed penuh (tenant + meja + 7 item + aset) via ASGI — tanpa subprocess.
+        # Aset di-bake ke deployment: copy assets ke backend/seed_assets saat build.
         import anyio
 
         from httpx import ASGITransport, AsyncClient
 
+        from seed_core import seed_base_url
+
         async def _do_seed() -> None:
-            async with AsyncClient(
-                transport=ASGITransport(app=app), base_url="http://local"
-            ) as c:
-                await c.post("/auth/register-tenant", json={
-                    "name": "SAVOR Aresto (Demo)",
-                    "email": "demo@savor.id",
-                    "password": "SAVOR-2026!",
-                    "slug": "meja-aresto",
-                })
+            transport = ASGITransport(app=app, client=("127.0.0.1", 3000))
+            async with AsyncClient(transport=transport, base_url="http://local") as c:
+                seed_base_url("http://local", client=c)
 
         anyio.run(_do_seed)
-        print("[seed] tenant demo dibuat", flush=True)
+        print("[seed] data demo penuh dibuat (tenant/meja/menu/aset)", flush=True)
     except Exception as e:  # pragma: no cover - jangan pernah gagalkan cold start
         print(f"[seed] skipped: {e}", flush=True)
 
