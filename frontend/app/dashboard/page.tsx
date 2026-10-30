@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toString as qrToString } from "qrcode";
 import { Badge, Button, Card } from "@/components/ui";
 import { apiFetch, clearAuth, errMsg, getAuth } from "@/lib/api";
 
@@ -243,22 +242,28 @@ export default function DashboardPage() {
       return;
     }
     let on = true;
-    // ponytail: origin bisa dicover via NEXT_PUBLIC_PUBLIC_BASE (Vercel URL) agar
-    // QR dari dashboard tetap menunjuk HTTPS; default = origin browser.
+    // ponytail: origin bisa di-cover via NEXT_PUBLIC_PUBLIC_BASE (URL Vercel)
+    // agar QR dari dashboard tetap menunjuk HTTPS; default = origin browser.
     const origin =
       process.env.NEXT_PUBLIC_PUBLIC_BASE?.replace(/\/$/, "") ||
       window.location.origin;
-    Promise.all(
-      tables.map(async (t) => ({
-        code: t.code,
-        dataUrl: await qrToString(`${origin}/public/${slug}?table=${encodeURIComponent(t.code)}`, {
-          margin: 1,
-          width: 220,
-        }),
-      })),
-    )
-      .then((all) => on && setQrImages(all))
-      .catch(() => {});
+    (async () => {
+      // ponytail: import dinamis di client agar tidak masuk bundle SSR.
+      const { toString } = await import("qrcode");
+      const all = await Promise.all(
+        tables.map(async (t) => ({
+          code: t.code,
+          dataUrl: await toString(
+            `${origin}/public/${slug}?table=${encodeURIComponent(t.code)}`,
+            { margin: 1, width: 220 },
+          ),
+        })),
+      );
+      if (on) setQrImages(all);
+    })().catch((e) => {
+      // Di-log supaya kegagalan render QR tidak lagi diam-diam.
+      console.error("QR gagal dibuat:", e);
+    });
     return () => {
       on = false;
     };
