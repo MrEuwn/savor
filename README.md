@@ -149,7 +149,7 @@ terpisah (Root Directory `frontend`), keduanya terhubung via env
 ## 📄 Link demo online
 
 - Frontend: https://frontend-ecru-nine-78msnkzo1b.vercel.app
-- Backend API: https://savor-api.vercel.app (`/healthz`, `/docs`)
+- Backend API: https://savor-api2.vercel.app (`/healthz`, `/docs`)
 
 ## Lisensi aset
 
