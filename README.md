@@ -8,9 +8,6 @@
 
 ![SAVOR - alur pemakaian lengkap dalam 60 detik](docs/img/savor-demo.gif)
 
-*Demo 60 detik: masalahnya - cara pakai dashboard - kasir menandai menu habis -
-pelanggan memindai QR dan melihat porsi 1:1 di meja.*
-
 SAVOR membantu restoran menurunkan sisa makanan (food waste) dengan cara
 sederhana namun powerful: pelanggan melihat **porsi makanan dalam ukuran asli
 (1:1) langsung di atas meja mereka** lewat Augmented Reality - cukup scan QR,
