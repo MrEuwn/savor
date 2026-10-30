@@ -46,40 +46,11 @@ def _seed_if_empty() -> None:
         finally:
             db.close()
 
-        # Seed penuh (tenant + meja + 7 item + aset) via ASGI — tanpa subprocess.
-        # Aset di-bake ke deployment: copy assets ke backend/seed_assets saat build.
-        import anyio
+        # Seed langsung ke DB + storage (tanpa HTTP/thread — bebas kendala
+        # event loop & lock SQLite di serverless).
+        import seed_direct
 
-        from httpx import ASGITransport, AsyncClient
-
-        from seed_core import seed_base_url
-
-        async def _do_seed() -> None:
-            transport = ASGITransport(app=app, client=("127.0.0.1", 3000))
-            async with AsyncClient(transport=transport, base_url="http://local") as c:
-                await c.post("/healthz")  # warm ASGI stack
-
-        # Vercel runtime menjalankan event loop di thread ini; seed_base_url
-        # memakai httpx sinkron → jalankan di thread terpisah dengan loopnya
-        # sendiri (anyio.run di thread baru selalu boleh).
-        import asyncio
-        import threading
-
-        result: dict = {}
-
-        def _runner() -> None:
-            try:
-                anyio.run(_do_seed)   # warm ASGI di thread itu dulu
-                seed_base_url("http://local")
-                result["ok"] = True
-            except Exception as exc:  # pragma: no cover
-                result["err"] = str(exc)
-
-        t = threading.Thread(target=_runner, daemon=True)
-        t.start()
-        t.join(timeout=180)
-        if "err" in result:
-            raise RuntimeError(f"seed thread gagal: {result['err']}")
+        seed_direct.seed_direct()
         print("[seed] data demo penuh dibuat (tenant/meja/menu/aset)", flush=True)
     except Exception as e:  # pragma: no cover - jangan pernah gagalkan cold start
         print(f"[seed] skipped: {e}", flush=True)
