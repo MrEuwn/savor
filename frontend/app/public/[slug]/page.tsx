@@ -30,9 +30,16 @@ export default async function PublicMenuPage({ params, searchParams }: Props) {
 
   if (!data) {
     return (
-      <main className="mx-auto w-full max-w-md px-4 py-16 text-center">
-        <h1 className="mb-2 text-xl font-semibold">Menu tidak dapat dimuat</h1>
-        <p className="text-sm text-stone-600">Silakan coba lagi sebentar lagi.</p>
+      <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center bg-paper-white px-6 py-16 text-center">
+        <div className="rounded-[24px] bg-mist-gray p-8">
+          <h1 className="font-serif text-xl font-normal text-ink-black">
+            Menu Tidak Dapat Dimuat
+          </h1>
+          <p className="mt-2 text-xs text-slate-gray">
+            Layanan restoran sedang tidak dapat dijangkau. Silakan hubungi pelayan
+            atau coba lagi beberapa saat lagi.
+          </p>
+        </div>
       </main>
     );
   }

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui";
+import { Glasses, RotateCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   src: string;
@@ -18,9 +19,7 @@ export default function Viewer3D({ src, poster, name }: Props) {
   const [loaded, setLoaded] = useState(false);
   const [secure, setSecure] = useState(true);
 
-  // Tunda import three.js/model-viewer sampai kartu masuk viewport.
-  // ponytail: satu viewer = satu WebGL context; batas browser ~8-16.
-  // Upgrade: virtualisasi daftar bila menu > 20 item.
+  // Tunda import model-viewer sampai kartu masuk viewport untuk menghemat konteks WebGL browser
   useEffect(() => {
     const el = wrapRef.current;
     if (!el || visible) return;
@@ -32,8 +31,7 @@ export default function Viewer3D({ src, poster, name }: Props) {
     return () => io.disconnect();
   }, [visible]);
 
-  // model-viewer hanya di browser (custom element, memakai window/self).
-  // Muat dinamis saat effect => SSR aman.
+  // Model-viewer hanya di client browser (custom element window/self)
   useEffect(() => {
     if (!visible) return;
     let cancelled = false;
@@ -51,7 +49,7 @@ export default function Viewer3D({ src, poster, name }: Props) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [visible]);
 
   useEffect(() => {
     if (!ready) return;
@@ -60,6 +58,7 @@ export default function Viewer3D({ src, poster, name }: Props) {
     const onError = () => setFailed(true);
     const onLoad = () => setLoaded(true);
     const onARFailed = () => setFailed(true);
+
     el.addEventListener("error", onError);
     el.addEventListener("load", onLoad);
     el.addEventListener("ar-failed", onARFailed);
@@ -86,12 +85,17 @@ export default function Viewer3D({ src, poster, name }: Props) {
     }
   };
 
+  // Fallback 2D bila WebGL / 3D gagal dimuat
   if (failed) {
     return poster ? (
-      <img src={poster} alt={name} className="h-64 w-full object-cover" />
+      <img
+        src={poster}
+        alt={name}
+        className="h-64 w-full object-cover rounded-[16px]"
+      />
     ) : (
-      <div className="flex h-64 w-full items-center justify-center bg-stone-100 px-4 text-center text-sm text-stone-500">
-        Model 3D tidak dapat dimuat.
+      <div className="flex h-64 w-full items-center justify-center rounded-[16px] bg-mist-gray px-4 text-center text-xs text-slate-gray">
+        Model 3D tidak dapat dimuat di perangkat ini.
       </div>
     );
   }
@@ -99,9 +103,12 @@ export default function Viewer3D({ src, poster, name }: Props) {
   const arBlocked = !secure;
 
   return (
-    <div ref={wrapRef}>
-      {/* Poster tampil sebelum viewer aktif = LCP cepat tanpa three.js */}
-      <div className="relative">
+    <div ref={wrapRef} className="space-y-3">
+      {/* Container model-viewer dengan data-lenis-prevent agar rotasi sentuh tidak memicu scroll Lenis */}
+      <div
+        data-lenis-prevent="true"
+        className="relative h-64 w-full overflow-hidden rounded-[20px] bg-mist-gray/80 touch-pan-y"
+      >
         {ready ? (
           <model-viewer
             ref={ref}
@@ -112,46 +119,62 @@ export default function Viewer3D({ src, poster, name }: Props) {
             ar-modes="webxr scene-viewer quick-look"
             auto-rotate
             camera-controls
-            className="h-64 w-full bg-stone-100"
+            shadow-intensity="1"
+            className="h-full w-full"
           />
         ) : (
           poster && (
             <img
               src={poster}
               alt={name}
-              className="h-64 w-full object-cover"
+              className="h-full w-full object-cover"
               loading="lazy"
             />
           )
         )}
+
+        {/* Loading overlay */}
         {ready && !loaded && (
           <div
-            className="absolute inset-0 flex items-center justify-center text-sm text-stone-500"
+            className="absolute inset-0 flex items-center justify-center gap-2 bg-mist-gray/60 backdrop-blur-xs text-xs text-slate-gray"
             role="status"
           >
-            Memuat model 3D…
+            <RotateCw className="h-4 w-4 animate-spin text-ink-black" />
+            <span>Memuat model 3D…</span>
+          </div>
+        )}
+
+        {/* Hint banner rotasi */}
+        {loaded && (
+          <div className="absolute bottom-2 left-2 rounded-full bg-paper-white/80 backdrop-blur-md px-2.5 py-1 text-[10px] text-slate-gray shadow-xs pointer-events-none">
+            Geser untuk putar 360°
           </div>
         )}
       </div>
-      <div className="p-3">
+
+      {/* Action button "Lihat di Meja (AR)" dengan touch target min 44px */}
+      <div>
         <Button
-          className="w-full"
+          className="w-full min-h-[44px] flex items-center justify-center gap-2 text-xs"
           onClick={enterAR}
           disabled={!loaded || arBlocked}
-          aria-label={`Lihat ${name} di meja (AR)`}
+          aria-label={`Lihat porsi ${name} di meja dengan Augmented Reality`}
         >
-          {arBlocked ? "AR butuh HTTPS / localhost" : "Lihat di Meja (AR)"}
+          <Glasses className="h-4 w-4" />
+          <span>
+            {arBlocked ? "AR butuh HTTPS / Localhost" : "Lihat di Meja (AR)"}
+          </span>
         </Button>
+
         {!loaded && !arBlocked && (
-          <p className="mt-2 text-center text-xs text-stone-500">
-            AR aktif bila di HP (iOS Quick Look / Android Scene Viewer).
+          <p className="mt-1.5 text-center text-[11px] text-slate-gray">
+            Aktif di smartphone (iOS Quick Look / Android Scene Viewer).
           </p>
         )}
         {arBlocked && (
-          <p className="mt-2 text-center text-xs text-amber-700">
-            3D tetap bisa dirotasikan di atas. AR "Lihat di Meja" hanya aktif
-            melalui HTTPS (atau localhost di laptop) — buka link publik yang
-            sama lewat demo online untuk mengaktifkannya.
+          <p className="mt-1.5 text-center text-[11px] text-amber-700">
+            3D tetap bisa dirotasikan. Mode AR kamera meja membutuhkan koneksi
+            HTTPS.
           </p>
         )}
       </div>

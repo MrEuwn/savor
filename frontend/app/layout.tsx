@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Merriweather, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { SmoothScrollProvider } from "@/components/smooth-scroll";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
+const merriweather = Merriweather({
+  weight: ["300", "400", "700"],
+  subsets: ["latin"],
+  variable: "--font-merriweather",
+  display: "swap",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "MejaAR",
-  description: "Menu digital dengan Augmented Reality",
+  title: "MejaAR — Augmented Dining Platform",
+  description: "Menu digital restoran dengan visualisasi porsi Augmented Reality untuk mengurangi food waste",
 };
 
 export default function RootLayout({
@@ -15,9 +27,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
-      <body className={`${inter.className} bg-stone-50 text-stone-900 antialiased`}>
-        {children}
+    <html
+      lang="id"
+      className={`${merriweather.variable} ${plusJakartaSans.variable}`}
+    >
+      <body className="min-h-screen bg-paper-white font-sans text-ink-black antialiased selection:bg-blush-peach selection:text-sienna-brown">
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
   );
