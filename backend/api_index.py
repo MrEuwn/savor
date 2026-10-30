@@ -17,8 +17,7 @@ os.environ.setdefault("STORAGE_LOCAL_DIR", "/tmp/storage")
 os.environ.setdefault("CORS_ORIGINS", "*")
 
 # Pastikan folder app/ dapat diimport (rootDir berada di repo root)
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BACKEND = os.path.join(ROOT, "backend")
+BACKEND = os.path.dirname(os.path.abspath(__file__))
 if BACKEND not in sys.path:
     sys.path.insert(0, BACKEND)
 os.chdir(BACKEND)
