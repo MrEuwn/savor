@@ -57,19 +57,29 @@ def _seed_if_empty() -> None:
         async def _do_seed() -> None:
             transport = ASGITransport(app=app, client=("127.0.0.1", 3000))
             async with AsyncClient(transport=transport, base_url="http://local") as c:
-                seed_base_url("http://local", client=c)
+                await c.post("/healthz")  # warm ASGI stack
 
-        # Vercel runtime sudah menjalankan event loop di thread ini —
-        # anyio.run() akan gagal "Already running asyncio". Deteksi & pakai
-        # loop yang ada; kalau tidak ada (lokal sinkron), buat sendiri.
+        # Vercel runtime menjalankan event loop di thread ini; seed_base_url
+        # memakai httpx sinkron → jalankan di thread terpisah dengan loopnya
+        # sendiri (anyio.run di thread baru selalu boleh).
         import asyncio
+        import threading
 
-        try:
-            asyncio.get_running_loop()
-        except RuntimeError:
-            anyio.run(_do_seed)
-        else:
-            asyncio.get_event_loop().run_until_complete(_do_seed())
+        result: dict = {}
+
+        def _runner() -> None:
+            try:
+                anyio.run(_do_seed)   # warm ASGI di thread itu dulu
+                seed_base_url("http://local")
+                result["ok"] = True
+            except Exception as exc:  # pragma: no cover
+                result["err"] = str(exc)
+
+        t = threading.Thread(target=_runner, daemon=True)
+        t.start()
+        t.join(timeout=180)
+        if "err" in result:
+            raise RuntimeError(f"seed thread gagal: {result['err']}")
         print("[seed] data demo penuh dibuat (tenant/meja/menu/aset)", flush=True)
     except Exception as e:  # pragma: no cover - jangan pernah gagalkan cold start
         print(f"[seed] skipped: {e}", flush=True)
