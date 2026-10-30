@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: savor-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: "pip install uv && uv sync --frozen"
+    startCommand: "uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: DATABASE_URL
+        value: "sqlite:////opt/render/project/src/backend/savor.db"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false   # isi manual: URL Vercel kamu
+      - key: ASSETS_PUBLIC_BASE
+        value: "/assets"
+      - key: STORAGE_BACKEND
+        value: "local"
+      - key: STORAGE_LOCAL_DIR
+        value: "./storage"
+    # Disk persisten supaya SQLite + aset upload tidak hilang saat restart
+    disk:
+      name: savor-data
+      mountPath: /opt/render/project/src/backend/data
+      sizeGB: 1
