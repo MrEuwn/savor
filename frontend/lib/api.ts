@@ -1,5 +1,10 @@
+// Server-only (SSR fetches page.tsx pakai ini, absolute ke backend).
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+
+// Browser (client) pakai relative "/api" → di-proxy Next ke backend,
+// sehingga pengunjung HP di balik tunnel tidak menjangkau IP laptop.
+const API_BASE_B = "/api";
 
 const KEY = "mejaar";
 
@@ -46,7 +51,7 @@ async function tryRefresh(): Promise<boolean> {
   const auth = getAuth();
   if (!auth?.refresh_token) return false;
   try {
-    const res = await fetch(`${API_BASE}/auth/refresh`, {
+    const res = await fetch(`${API_BASE_B}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: auth.refresh_token }),
@@ -74,7 +79,7 @@ export async function apiFetch<T = unknown>(
     if (token) headers.set("Authorization", `Bearer ${token}`);
     if (!headers.has("content-type") && typeof init.body === "string")
       headers.set("content-type", "application/json");
-    return fetch(`${API_BASE}${path}`, { ...init, headers });
+    return fetch(`${API_BASE_B}${path}`, { ...init, headers });
   };
 
   const isAuthPath = path.startsWith("/auth/");
