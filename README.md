@@ -4,6 +4,11 @@
 
 *Savor the sight before you order.*
 
+![SAVOR - alur pemakaian lengkap dalam 60 detik](docs/img/savor-demo.gif)
+
+*Demo 60 detik: masalahnya - cara pakai dashboard - kasir menandai menu habis -
+pelanggan memindai QR dan melihat porsi 1:1 di meja.*
+
 SAVOR membantu restoran menurunkan sisa makanan (food waste) dengan cara
 sederhana namun powerful: pelanggan melihat **porsi makanan dalam ukuran asli
 (1:1) langsung di atas meja mereka** lewat Augmented Reality - cukup scan QR,
@@ -19,15 +24,6 @@ waste hingga 50% pada 2030).
 > Proyek untuk **UINIC 8.0 - Web Development Competition**
 > Tema: *Engineering Interconnected Web Solutions to Empower Digital Ecosystems*
 > Subtema: *Lingkungan*
-
----
-
-## Demo dalam 60 detik
-
-![SAVOR - alur pemakaian lengkap](docs/img/savor-demo.gif)
-
-*Alur lengkap: masalahnya - cara pakai dashboard - kasir menandai menu habis -
-pelanggan memindai QR dan melihat porsi 1:1 di meja. Tanpa narasi, tanpa suara.*
 
 ---
 
