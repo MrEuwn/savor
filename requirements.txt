@@ -5,6 +5,7 @@ pydantic[email]>=2
 pydantic-settings>=2
 argon2-cffi
 python-jose[cryptography]
+python-multipart
 slowapi
 httpx
 alembic
