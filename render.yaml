@@ -22,8 +22,8 @@ services:
         value: "local"
       - key: STORAGE_LOCAL_DIR
         value: "./storage"
-    # Disk persisten supaya SQLite + aset upload tidak hilang saat restart
-    disk:
-      name: savor-data
-      mountPath: /opt/render/project/src/backend/data
-      sizeGB: 1
+# Catatan free plan:
+# - Tanpa disk persisten: SQLite + storage di-reset saat redeploy.
+#   Setelah deploy, jalankan ulang seed via Render Shell (DEPLOY_CHECKLIST.txt).
+# - Service sleep setelah 15 menit idle; request pertama lambat ±30-60 detik.
+#   Anti-sleep: cron-job.org ping /healthz tiap 10 menit.
