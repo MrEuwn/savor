@@ -14,3 +14,14 @@ serta alasan teknisnya. Format: tanggal - keputusan - alasan.
 4. **Aset 3D = upload manual GLB** (sesuai PRD bagian 5). Alur produksi: perusahaan/
    kreator scanning pakai iPhone LiDAR (Polycam/KIRI) lalu upload GLB via dashboard —
    "replay mode". Auto-rekonstruksi dari foto = F13, tetap roadmap P2.
+5. **Path endpoint POS**: PRD menulis `/integrations/pos/menu-sync` & `/integrations/pos/items/{external_id}/availability`;
+   implementasi memakai `/pos/menu-sync` & `/pos/items/{external_id}/availability`
+   (fungsional setara, prefix lebih pendek). Semua tetap di-auth API key.
+6. **URL aset relatif** (`/assets/...`) + rewrite proxy di Next instead of absolute
+   base: pengunjung HP di balik tunnel/proxy menjangkau aset via origin frontend
+   yang sama; tak tergantung IP host. Storage S3 tetap opsi aktif di config.
+7. **Webhook keluar HMAC (F8/T15, P1) = roadmap**: CRUD endpoint
+   `/integrations/webhooks` ada & terlindungi JWT, namun pengiriman event keluar
+   bertanda tangan HMAC belum diimplement (tidak diklaim selesai).
+8. **Halaman cetak QR terpisah** tidak dibuat; QR tersedia di dashboard per tabel
+   (cukup untuk demo). Roadmap bila diminta juri.

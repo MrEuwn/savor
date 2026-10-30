@@ -138,6 +138,19 @@ export default function LoginPage() {
             {busy ? "Memproses…" : mode === "login" ? "Masuk" : "Daftar"}
           </Button>
         </form>
+
+        {mode === "login" && (
+          <button
+            type="button"
+            onClick={() => {
+              setEmail("demo@mejaar.id");
+              setPassword("MejaAR-2026!");
+            }}
+            className="mt-3 w-full rounded-xl border border-dashed border-stone-300 px-3 py-2 text-xs text-stone-600 transition-colors hover:border-emerald-500 hover:text-emerald-700"
+          >
+            Gunakan akun demo (demo@mejaar.id)
+          </button>
+        )}
       </div>
     </main>
   );

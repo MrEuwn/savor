@@ -27,6 +27,16 @@ from .storage import _storage_root
 
 def create_app() -> FastAPI:
     app = FastAPI(title="MejaAR API", version="0.1.0")
+
+    @app.middleware("http")
+    async def security_headers(request, call_next):
+        response = await call_next(request)
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault("Permissions-Policy", "camera=(self), microphone=(), geolocation=()")
+        return response
+
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, rate_limit_error_handler)  # type: ignore[arg-type]
     app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]

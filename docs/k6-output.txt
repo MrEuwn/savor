@@ -1,0 +1,25 @@
+
+    ✓ status 200
+    ✓ items ada
+
+    HTTP
+    http_req_duration..............: avg=88.24ms min=51.94ms med=87.3ms  max=175.25ms p(90)=96.22ms p(95)=99.75ms 
+      { expected_response:true }...: avg=88.24ms min=51.94ms med=87.3ms  max=175.25ms p(90)=96.22ms p(95)=99.75ms 
+    http_req_failed................: 0.00%  0 out of 6724
+    http_reqs......................: 6724   223.759407/s
+
+    EXECUTION
+    iteration_duration.............: avg=89.31ms min=52.36ms med=88.28ms max=176.18ms p(90)=97.29ms p(95)=100.76ms
+    iterations.....................: 6724   223.759407/s
+    vus............................: 20     min=20        max=20
+    vus_max........................: 20     min=20        max=20
+
+    NETWORK
+    data_received..................: 23 MB  773 kB/s
+    data_sent......................: 699 kB 23 kB/s
+
+
+
+
+running (0m30.1s), 00/20 VUs, 6724 complete and 0 interrupted iterations
+default ✓ [ 100% ] 20 VUs  30s

@@ -10,15 +10,32 @@ type Props = {
 };
 
 export default function Viewer3D({ src, poster, name }: Props) {
+  const wrapRef = useRef<HTMLDivElement>(null);
   const ref = useRef<any>(null);
+  const [visible, setVisible] = useState(false);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [secure, setSecure] = useState(true);
 
+  // Tunda import three.js/model-viewer sampai kartu masuk viewport.
+  // ponytail: satu viewer = satu WebGL context; batas browser ~8-16.
+  // Upgrade: virtualisasi daftar bila menu > 20 item.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || visible) return;
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && setVisible(true)),
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [visible]);
+
   // model-viewer hanya di browser (custom element, memakai window/self).
   // Muat dinamis saat effect => SSR aman.
   useEffect(() => {
+    if (!visible) return;
     let cancelled = false;
     setSecure(window.isSecureContext);
     (async () => {
@@ -82,20 +99,32 @@ export default function Viewer3D({ src, poster, name }: Props) {
   const arBlocked = !secure;
 
   return (
-    <div>
+    <div ref={wrapRef}>
+      {/* Poster tampil sebelum viewer aktif = LCP cepat tanpa three.js */}
       <div className="relative">
-        <model-viewer
-          ref={ref}
-          src={src}
-          poster={poster ?? undefined}
-          alt={name}
-          ar
-          ar-modes="webxr scene-viewer quick-look"
-          auto-rotate
-          camera-controls
-          className="h-64 w-full bg-stone-100"
-        />
-        {!loaded && (
+        {ready ? (
+          <model-viewer
+            ref={ref}
+            src={src}
+            poster={poster ?? undefined}
+            alt={name}
+            ar
+            ar-modes="webxr scene-viewer quick-look"
+            auto-rotate
+            camera-controls
+            className="h-64 w-full bg-stone-100"
+          />
+        ) : (
+          poster && (
+            <img
+              src={poster}
+              alt={name}
+              className="h-64 w-full object-cover"
+              loading="lazy"
+            />
+          )
+        )}
+        {ready && !loaded && (
           <div
             className="absolute inset-0 flex items-center justify-center text-sm text-stone-500"
             role="status"
