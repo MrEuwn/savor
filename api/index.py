@@ -46,12 +46,75 @@ def _seed_if_empty() -> None:
         finally:
             db.close()
 
-        # Seed langsung ke DB + storage (tanpa HTTP/thread — bebas kendala
-        # event loop & lock SQLite di serverless).
-        import seed_direct
+        # Seed langsung ke DB + storage. Logika inline (satu file) supaya
+        # ikut ter-bundle walau Vercel analyzer tidak mengikut sibling module.
+        from datetime import datetime, timezone
+        from pathlib import Path
 
-        seed_direct.seed_direct()
-        print("[seed] data demo penuh dibuat (tenant/meja/menu/aset)", flush=True)
+        from argon2 import PasswordHasher
+
+        from app.db import Base, engine
+
+        Base.metadata.create_all(bind=engine)
+
+        API_DIR = Path(__file__).resolve().parent
+        asset_dir = API_DIR / "seed_assets"
+
+        MENU: list[tuple[str, int, str, str, int | None, str | None, str | None]] = [
+            ("Nasi Goreng Goyang", 28000, "Makanan", "Nasi goreng telur, kecap, bakso kecil.", 650, "nasi-goreng.webp", None),
+            ("Soto Ayam Daging", 22000, "Makanan", "Soto bening, suwiran ayam, sambal.", 420, "soto.webp", None),
+            ("Bakso Urat Jumbo", 25000, "Makanan", "6 bakso urat, mi kuning, bawang goreng.", 510, "bakso.webp", None),
+            ("Es Teh Leci", 8000, "Minuman", "Teh manis dingin, leci impor.", 120, "es-teh.webp", None),
+            ("Burger Beef Klasik", 42000, "Makanan", "Burger beef + keju, lihat ukuran di AR.", 780, None, "burger.glb"),
+            ("Sushi Set 8 Pcs", 55000, "Makanan", "Set 8 pcs: salmon, tuna, california.", 390, None, "sushi.glb"),
+            ("Croissant Butter", 24000, "Camilan", "Croissant mentega baru dipanggang.", 310, None, "croissant.glb"),
+        ]
+
+        db = SessionLocal()
+        try:
+            tenant = models.Tenant(slug="meja-aresto", name="SAVOR Aresto (Demo)",
+                                   created_at=datetime.now(timezone.utc))
+            db.add(tenant)
+            db.flush()
+
+            ph = PasswordHasher()
+            db.add(models.User(tenant_id=tenant.id, email="demo@savor.id",
+                               password_hash=ph.hash("SAVOR-2026!"), role="tenant_owner"))
+            for code in ("T-01", "T-02"):
+                db.add(models.TableCode(tenant_id=tenant.id, code=code))
+
+            storage_root = Path(os.environ.get("STORAGE_LOCAL_DIR", "/tmp/storage"))
+            made = []
+            for name, price, cat, desc, kcal, photo, glb in MENU:
+                item = models.MenuItem(
+                    tenant_id=tenant.id, name=name, description=desc, price=price,
+                    category=cat, calories_kcal=kcal, is_available=True, status="ready",
+                )
+                db.add(item)
+                db.flush()
+                made.append(item)
+                for kind, fname, prefix in (("image", photo, "img"), ("glb", glb, "glb")):
+                    if not fname:
+                        continue
+                    src = asset_dir / fname
+                    if not src.is_file():
+                        continue
+                    data = src.read_bytes()
+                    sub = storage_root / f"t{tenant.id}" / str(item.id)
+                    sub.mkdir(parents=True, exist_ok=True)
+                    dst = f"{prefix}_{fname}"
+                    (sub / dst).write_bytes(data)
+                    key = f"t{tenant.id}/{item.id}/{dst}"
+                    if kind == "image":
+                        item.image_key = key
+                    else:
+                        item.glb_key = key
+            if len(made) > 3:
+                made[3].is_available = False
+            db.commit()
+            print(f"[seed] OK tenant={tenant.id} item={len(made)}", flush=True)
+        finally:
+            db.close()
     except Exception as e:  # pragma: no cover - jangan pernah gagalkan cold start
         print(f"[seed] skipped: {e}", flush=True)
 
