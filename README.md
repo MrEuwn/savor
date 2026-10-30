@@ -22,6 +22,15 @@ waste hingga 50% pada 2030).
 
 ---
 
+## Demo dalam 60 detik
+
+![SAVOR - alur pemakaian lengkap](docs/img/savor-demo.gif)
+
+*Alur lengkap: masalahnya - cara pakai dashboard - kasir menandai menu habis -
+pelanggan memindai QR dan melihat porsi 1:1 di meja. Tanpa narasi, tanpa suara.*
+
+---
+
 ## Demo Online (dapat langsung dibuka juri)
 
 | Apa | Link |
