@@ -2,8 +2,6 @@
 
 <h1 align="center">SAVOR</h1>
 
-<p align="center"><img src="docs/img/logo.jpg" width="72" alt="SAVOR"></p>
-
 <p align="center"><b>Smart AR Visualization for Optimized Restaurant ordering</b></p>
 
 <p align="center"><i>Savor the sight before you order.</i></p>
