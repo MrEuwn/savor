@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    database_url: str = "sqlite:///./mejaar.db"
+    database_url: str = "sqlite:///./savor.db"
     jwt_secret: str = "change-me-32-chars-min"
     jwt_access_ttl_minutes: int = 15
     jwt_refresh_ttl_days: int = 14

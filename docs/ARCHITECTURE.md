@@ -1,4 +1,4 @@
-# Arsitektur MejaAR
+# Arsitektur SAVOR
 
 ## Diagram end-to-end
 
@@ -8,7 +8,7 @@ flowchart LR
   O[Pemilik restoran<br/>tenant] --> FE
   FE -->|<model-viewer>: WebGL + AR<br/>Quick Look / Scene Viewer / WebXR| C
   FE -->|REST + JWT/API key| API[FastAPI Core API]
-  POS[POS pihak ketiga<br/>atau pos-simulator] -->|X-MejaAR-Key| API
+  POS[POS pihak ketiga<br/>atau pos-simulator] -->|X-SAVOR-Key| API
   API --> DB[(PostgreSQL / SQLite dev)]
   API -->|isi + invalidasi| CACH[(Menu cache per slug)]
   API --> AS[Storage aset<br/>disk lokal dev / S3 R2 prod]
@@ -26,7 +26,7 @@ flowchart LR
 | Cache | `MenuCache` in-memory per slug, TTL 60s + invalidasi eksplisit | P0 sederhana; P1 Redis (T18) |
 | Storage | Disk lokal via `StaticFiles` (dev), S3-compatible via env (prod) | Aset 3D minimal; signed URL siap dikonfigurasi |
 | Auth | JWT access 15m + refresh 14h (rotasi, revokasi di DB), argon2id, RBAC | Pemisahan manusia/mesin |
-| POS | API key `mk_mat_*` tersimpan hashed SHA-256, header `X-MejaAR-Key` | Mesin tak pegang JWT |
+| POS | API key `mk_mat_*` tersimpan hashed SHA-256, header `X-SAVOR-Key` | Mesin tak pegang JWT |
 | Rate limit | slowapi, in-memory, limit via `RATE_LIMIT_PUBLIC` | Cukup untuk MVP demo |
 | CI | GitHub Actions: ruff + pytest backend (job frontend menyusul T8) | Bukti kualitas di riwayat commit |
 
@@ -54,7 +54,7 @@ POS `PATCH /pos/items/{ext}/availability` → row diubahkan → `menu_cache.clea
 
 - Password: argon2id; token: HS256, kedaluwarsa; refresh dicabut.
 - Upload: validasi magic bytes (bukan ekstensi), batasan 2/3 MB, filename disanitasi.
-- CORS: `CORS_ORIGINS` eksplisit; header Authorization & X-MejaAR-Key dibatasi cakupan.
+- CORS: `CORS_ORIGINS` eksplisit; header Authorization & X-SAVOR-Key dibatasi cakupan.
 - Event publik: tanpa PII, rate-limit, item tak dikenal → 204 (tak bocorkan keberadaan).
 - Tak ada secret di repo; hanya `.env.example`.
 

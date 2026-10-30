@@ -29,11 +29,11 @@ ITEMS = [
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--api", default="http://localhost:8000")
-    ap.add_argument("--key", required=True, help="API key tenant (X-MejaAR-Key)")
+    ap.add_argument("--key", required=True, help="API key tenant (X-SAVOR-Key)")
     args = ap.parse_args()
     api = args.api.rstrip("/")
     client = httpx.Client(base_url=api)
-    kh = {"X-MejaAR-Key": args.key}
+    kh = {"X-SAVOR-Key": args.key}
 
     r = client.post(f"{api}/pos/menu-sync", json={"items": ITEMS}, headers=kh)
     print("sync:", r.status_code, r.json())

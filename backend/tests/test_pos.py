@@ -22,7 +22,7 @@ def test_menu_sync_and_availability_flow(client):
     t = make_tenant(client, "p2")
     key = _key(client, t)
     slug = t["tenant"]["slug"]
-    kh = {"X-MejaAR-Key": key}
+    kh = {"X-SAVOR-Key": key}
 
     # Sinkron pertama: 2 item baru
     r = client.post("/pos/menu-sync",
@@ -62,7 +62,7 @@ def test_invalid_api_key_rejected(client):
     make_tenant(client, "p3")
     r = client.post("/pos/menu-sync",
                     json={"items": [{"external_id": "X", "name": "N", "price": 1}]},
-                    headers={"X-MejaAR-Key": "salah"})
+                    headers={"X-SAVOR-Key": "salah"})
     assert r.status_code == 401
     assert r.json()["error"]["code"] == "unauthorized"
     # tanpa header
@@ -79,15 +79,15 @@ def test_pos_key_cannot_touch_other_tenant(client):
     # Seed item via API key B
     client.post("/pos/menu-sync",
                 json={"items": [{"external_id": "B-1", "name": "MilikB", "price": 100}]},
-                headers={"X-MejaAR-Key": key_b})
+                headers={"X-SAVOR-Key": key_b})
     # API key A tidak boleh mengubah item B (external_id unik global)
     r = client.patch("/pos/items/B-1/availability", json={"is_available": False},
-                     headers={"X-MejaAR-Key": key_a})
+                     headers={"X-SAVOR-Key": key_a})
     assert r.status_code == 404
     # sync A hanya menyentuh data A
     r = client.post("/pos/menu-sync",
                     json={"items": [{"external_id": "A-1", "name": "MilikA", "price": 200}]},
-                    headers={"X-MejaAR-Key": key_a})
+                    headers={"X-SAVOR-Key": key_a})
     assert r.json()["upserted"] == 1
     pub_b = client.get(f"/public/{b['tenant']['slug']}/menu").json()
     assert {i["name"] for i in pub_b["items"]} == {"MilikB"}
@@ -104,5 +104,5 @@ def test_revoke_api_key(client):
     assert r.status_code == 204
     r = client.post("/pos/menu-sync",
                     json={"items": [{"external_id": "R", "name": "N", "price": 1}]},
-                    headers={"X-MejaAR-Key": key})
+                    headers={"X-SAVOR-Key": key})
     assert r.status_code == 401

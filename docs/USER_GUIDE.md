@@ -1,6 +1,6 @@
-# USER GUIDE — MejaAR
+# USER GUIDE — SAVOR
 
-Panduan penggunaan MejaAR untuk demo dan pemakaian nyata.
+Panduan penggunaan SAVOR untuk demo dan pemakaian nyata.
 
 ## Peran
 
@@ -14,8 +14,8 @@ Panduan penggunaan MejaAR untuk demo dan pemakaian nyata.
 
 1. Buka `/login`.
 2. Klik tombol **"Gunakan akun demo"** (mengisi otomatis) atau isi manual:
-   - Email: `demo@mejaar.id`
-   - Password: `MejaAR-2026!`
+   - Email: `demo@savor.id`
+   - Password: `SAVOR-2026!`
 3. Klik **Masuk** → dashboard terbuka.
 
 Untuk akun restoran sendiri, pilih tab **Daftar**, isi nama usaha + email + password.
@@ -54,7 +54,7 @@ HTTP biasa, 3D tetap bisa diputar manual.
 
 1. Dashboard bagian **Integrasi** → buat API key (key ditampilkan **satu kali**,
    simpan di POS).
-2. POS mengirim sinkronisasi dengan header `X-MejaAR-Key`:
+2. POS mengirim sinkronisasi dengan header `X-SAVOR-Key`:
 
 ```
 POST /pos/menu-sync                        # sinkron daftar menu

@@ -6,7 +6,7 @@ export const API_BASE =
 // sehingga pengunjung HP di balik tunnel tidak menjangkau IP laptop.
 const API_BASE_B = "/api";
 
-const KEY = "mejaar";
+const KEY = "savor";
 
 export type Auth = {
   access_token: string;

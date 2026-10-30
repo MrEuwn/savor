@@ -32,9 +32,9 @@ def require_tenant_member(user_tenant: tuple[User, Tenant], roles: tuple[str, ..
 
 
 def get_pos_tenant(request: Request, db: Session = Depends(get_db)) -> Tenant:
-    raw = request.headers.get("X-MejaAR-Key", "")
+    raw = request.headers.get("X-SAVOR-Key", "")
     if not raw:
-        raise AppError(401, "unauthorized", "API key dibutuhkan (header X-MejaAR-Key).")
+        raise AppError(401, "unauthorized", "API key dibutuhkan (header X-SAVOR-Key).")
     digest = hashlib.sha256(raw.encode()).hexdigest()
     key = db.query(ApiKey).filter(ApiKey.key_hash == digest, ApiKey.revoked_at.is_(None)).first()
     if key is None:

@@ -12,6 +12,7 @@ venv/
 .ruff_cache/
 .env
 *.db
+test_storage/
 storage/*
 !storage/.gitkeep
 .lighthouse/

@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "MejaAR",
+  title: "SAVOR",
   description: "Menu digital dengan Augmented Reality",
 };
 

@@ -1,4 +1,4 @@
-# TEST REPORT — MejaAR
+# TEST REPORT — SAVOR
 
 Semua angka di bawah berasal dari perintah yang benar-benar dijalankan (lihat
 kolom "Cara mengulang"). Tanggal pengujian: 30 Oktober 2026, mesin dev Windows 11

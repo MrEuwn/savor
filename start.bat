@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableDelayedExpansion
-title MejaAR - One Click Runner
+title SAVOR - One Click Runner
 cd /d "%~dp0"
 color 0A
 
 echo ================================================
-echo    MejaAR - Jalankan Otomatis (kaya docker up)
+echo    SAVOR - Jalankan Otomatis (kaya docker up)
 echo ================================================
 echo.
 
@@ -87,7 +87,7 @@ if not exist "frontend\node_modules" (
 REM ============================================================
 REM 5. Seed database demo kalau belum ada
 REM ============================================================
-if not exist "backend\mejaar.db" (
+if not exist "backend\savor.db" (
   echo [4/6] Seed database demo...
   cd backend
   uv run python seed_demo.py --api http://localhost:8000 >nul 2>nul
@@ -100,10 +100,10 @@ REM ============================================================
 REM 6. Jalankan backend + frontend di window terpisah
 REM ============================================================
 echo [5/6] Jalankan backend di http://localhost:8000 ...
-start "MejaAR API" /min cmd /c "cd /d "%~dp0backend" && uv run uvicorn app.main:app --port 8000"
+start "SAVOR API" /min cmd /c "cd /d "%~dp0backend" && uv run uvicorn app.main:app --port 8000"
 
 echo [6/6] Jalankan frontend di http://localhost:3000 ...
-start "MejaAR Web" /min cmd /c "cd /d "%~dp0frontend" && npx next dev -p 3000"
+start "SAVOR Web" /min cmd /c "cd /d "%~dp0frontend" && npx next dev -p 3000"
 
 REM ============================================================
 REM 7. Tunggu kedua layanan siap (max 90 detik)
@@ -116,7 +116,7 @@ timeout /t 2 /nobreak >nul
 curl -s -o nul -w "%%{http_code}" http://localhost:8000/healthz 2>nul | findstr 200 >nul
 if errorlevel 1 (
   set /a TRIES+=1
-  if !TRIES! GEQ 45 (echo [ERROR] API tidak kunjung siap. Cek window "MejaAR API". & pause & exit /b 1)
+  if !TRIES! GEQ 45 (echo [ERROR] API tidak kunjung siap. Cek window "SAVOR API". & pause & exit /b 1)
   echo   ...API belum siap ^(%%TRIES%%^)
   goto WAIT_API
 )
@@ -128,7 +128,7 @@ timeout /t 2 /nobreak >nul
 curl -s -o nul -w "%%{http_code}" http://localhost:3000/login 2>nul | findstr 200 >nul
 if errorlevel 1 (
   set /a TRIES+=1
-  if !TRIES! GEQ 45 (echo [ERROR] Web tidak kunjung siap. Cek window "MejaAR Web". & pause & exit /b 1)
+  if !TRIES! GEQ 45 (echo [ERROR] Web tidak kunjung siap. Cek window "SAVOR Web". & pause & exit /b 1)
   echo   ...Web belum siap
   goto WAIT_WEB
 )
@@ -138,12 +138,12 @@ REM ============================================================
 REM 8. Tunnel HTTPS (AR di HP butuh secure context)
 REM ============================================================
 if exist "tools\cloudflared.exe" (
-  echo [AR] Jalankan tunnel HTTPS untuk HP ^(window "MejaAR Tunnel"^)...
-  start "MejaAR Tunnel" /min cmd /c ""%~dp0tools\cloudflared.exe" tunnel --url http://localhost:3000 --no-autoupdate"
+  echo [AR] Jalankan tunnel HTTPS untuk HP ^(window "SAVOR Tunnel"^)...
+  start "SAVOR Tunnel" /min cmd /c ""%~dp0tools\cloudflared.exe" tunnel --url http://localhost:3000 --no-autoupdate"
   REM tunggu URL muncul via cloudflared metrics tidak bisa; kasih delay & arahkan user
   timeout /t 8 /nobreak >nul
   echo.
-  echo   ^>^> Buka window "MejaAR Tunnel" ^(minimized di taskbar^) untuk lihat
+  echo   ^>^> Buka window "SAVOR Tunnel" ^(minimized di taskbar^) untuk lihat
   echo       URL https://xxxx.trycloudflare.com lalu buka di HP:
   echo       https://xxxx.trycloudflare.com/public/meja-aresto?table=T-01
   echo.
@@ -156,11 +156,11 @@ echo ================================================
 echo    SEMUA SIAP!
 echo ================================================
 echo   Dashboard : http://localhost:3000/login
-echo   Login     : demo@mejaar.id / MejaAR-2026!
+echo   Login     : demo@savor.id / SAVOR-2026!
 echo   Menu pub  : http://localhost:3000/public/meja-aresto?table=T-01
 echo   API docs  : http://localhost:8000/docs
 echo.
-echo   AR di HP  : lihat window "MejaAR Tunnel" untuk URL HTTPS
+echo   AR di HP  : lihat window "SAVOR Tunnel" untuk URL HTTPS
 echo   Matikan semua: double-click stop.bat
 echo ================================================
 echo.

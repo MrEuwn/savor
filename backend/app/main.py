@@ -26,7 +26,7 @@ from .storage import _storage_root
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="MejaAR API", version="0.1.0")
+    app = FastAPI(title="SAVOR API", version="0.1.0")
 
     @app.middleware("http")
     async def security_headers(request, call_next):

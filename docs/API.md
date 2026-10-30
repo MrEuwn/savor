@@ -1,4 +1,4 @@
-# Kontrak API MejaAR (Terkunci)
+# Kontrak API SAVOR (Terkunci)
 
 Agent backend & frontend HARUS mengikuti kontrak ini. Perbedaan apa pun dicatat
 di docs/DECISIONS.md. Base backend: `http://localhost:8000`.
@@ -7,7 +7,7 @@ di docs/DECISIONS.md. Base backend: `http://localhost:8000`.
 
 - Error format seragam: `{"error": {"code": str, "message": str}}` (4xx/5xx).
 - Auth manusia: `Authorization: Bearer <access_jwt>`. Claims: sub, tenant_id, role.
-- Auth mesin (POS): header `X-MejaAR-Key: <raw key>`. Server menyimpan hash sha256.
+- Auth mesin (POS): header `X-SAVOR-Key: <raw key>`. Server menyimpan hash sha256.
 - Uang: integer rupiah (mis. 25000).
 - URL aset lokal (dev): `http://localhost:8000/assets/<key>` served statis oleh FastAPI.
 
@@ -45,7 +45,7 @@ Token: access 15 menit, refresh 14 hari, HS256 dari `JWT_SECRET`.
 - `GET /public/{slug}/menu/{id}` → `item`
 - `POST /public/events` body `{slug, menu_item_id, ar_launched}` → 202 `{}` (tanpa PII; menu id tidak cocok/menubah 204)
 
-## POS (header X-MejaAR-Key)
+## POS (header X-SAVOR-Key)
 
 - `POST /pos/menu-sync` body `{"items":[{"external_id","name","description","price","category","is_available"}]}`
   → 200 `{"upserted": n}` (upsert per tenant key; menginvalidasi cache menu publik slug tsb)

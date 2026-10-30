@@ -2,13 +2,13 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: mejaar
-      POSTGRES_PASSWORD: mejaar
-      POSTGRES_DB: mejaar
+      POSTGRES_USER: savor
+      POSTGRES_PASSWORD: savor
+      POSTGRES_DB: savor
     ports: ["5432:5432"]
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mejaar"]
+      test: ["CMD-SHELL", "pg_isready -U savor"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -21,7 +21,7 @@ services:
     build: ./backend
     env_file: .env
     environment:
-      DATABASE_URL: postgresql+psycopg://mejaar:mejaar@db:5432/mejaar
+      DATABASE_URL: postgresql+psycopg://savor:savor@db:5432/savor
     ports: ["8000:8000"]
     depends_on:
       db:

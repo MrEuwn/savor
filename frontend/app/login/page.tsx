@@ -59,7 +59,7 @@ export default function LoginPage() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-4 py-10">
-      <h1 className="text-center text-2xl font-semibold">MejaAR</h1>
+      <h1 className="text-center text-2xl font-semibold">SAVOR</h1>
       <p className="mb-6 mt-1 text-center text-sm text-stone-600">
         Menu digital dengan Augmented Reality
       </p>
@@ -143,12 +143,12 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => {
-              setEmail("demo@mejaar.id");
-              setPassword("MejaAR-2026!");
+              setEmail("demo@savor.id");
+              setPassword("SAVOR-2026!");
             }}
             className="mt-3 w-full rounded-xl border border-dashed border-stone-300 px-3 py-2 text-xs text-stone-600 transition-colors hover:border-emerald-500 hover:text-emerald-700"
           >
-            Gunakan akun demo (demo@mejaar.id)
+            Gunakan akun demo (demo@savor.id)
           </button>
         )}
       </div>

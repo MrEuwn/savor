@@ -1,4 +1,4 @@
-# MejaAR
+# SAVOR
 
 Menu restoran dengan AR: pelanggan scan QR di meja, melihat porsi makanan dalam
 3D/AR langsung di browser HP, tanpa instal aplikasi. Tujuan: mengurangi
@@ -17,8 +17,8 @@ cukup melihat hasilnya di meja via AR.
 ### 1. Download project
 
 ```bash
-git clone https://github.com/MrEuwn/mejaar.git
-cd mejaar
+git clone https://github.com/MrEuwn/savor.git
+cd savor
 ```
 (atau tekan tombol hijau **Code → Download ZIP** lalu extract)
 
@@ -29,7 +29,7 @@ Script akan otomatis:
 - install dependencies backend + frontend (hanya pertama kali, ±3 menit)
 - seed database demo (3 model 3D + menu makanan Indonesia + 2 meja)
 - nyalakan **backend :8000** dan **frontend :3000**
-- nyalakan **tunnel HTTPS** untuk AR di HP (window "MejaAR Tunnel")
+- nyalakan **tunnel HTTPS** untuk AR di HP (window "SAVOR Tunnel")
 - tunggu semua benar-benar siap (health check) → **browser terbuka sendiri**
 
 > Kalau muncul "TUTUP jendela lalu double-click lagi": itu normal (PATH
@@ -41,9 +41,9 @@ Script akan otomatis:
 |---|---|
 | `http://localhost:3000/login` | Dashboard pemilik — klik tombol **"Gunakan akun demo"** |
 | `http://localhost:3000/public/meja-aresto?table=T-01` | Menu publik pelanggan |
-| Window **"MejaAR Tunnel"** | URL `https://xxxx.trycloudflare.com` — buka dari HP untuk **AR** |
+| Window **"SAVOR Tunnel"** | URL `https://xxxx.trycloudflare.com` — buka dari HP untuk **AR** |
 
-** akun demo: `demo@mejaar.id` / `MejaAR-2026!`**
+** akun demo: `demo@savor.id` / `SAVOR-2026!`**
 
 ### Menghentikan
 
@@ -62,7 +62,7 @@ Double-click `stop.bat` (mematikan backend + frontend + tunnel sekaligus).
 ## 🧑‍🍳 Integrasi POS
 
 1. Dashboard → **Integrasi** → buat API key (tampil sekali, salin).
-2. POS kirim sinkronisasi dengan header `X-MejaAR-Key`:
+2. POS kirim sinkronisasi dengan header `X-SAVOR-Key`:
 
 ```
 POST /pos/menu-sync

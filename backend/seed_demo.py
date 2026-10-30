@@ -1,10 +1,10 @@
-"""Seed data demo MejaAR (T11).
+"""Seed data demo SAVOR (T11).
 
 Lakukan terhadap backend yang berjalan (default http://localhost:8000):
     python seed_demo.py --api http://localhost:8000
 
 Membuat:
-- tenant demo (slug meja-aresto, email demo@mejaar.id / password MejaAR-2026!)
+- tenant demo (slug meja-aresto, email demo@savor.id / password SAVOR-2026!)
 - meja T-01 dan T-02
 - 4 menu foto (idi) + 3 menu GLB (jika ada di frontend/public/assets)
 - satu item ditandai habis (demo badge)
@@ -30,12 +30,12 @@ def main() -> None:
 
     client = httpx.Client(base_url=api, timeout=120)
 
-    email, password = "demo@mejaar.id", "MejaAR-2026!"
+    email, password = "demo@savor.id", "SAVOR-2026!"
     r = client.post(f"{api}/auth/login", json={"email": email, "password": password})
     if r.status_code != 200:
         r = client.post(
             f"{api}/auth/register-tenant",
-            json={"name": "Meja Aresto (Demo)", "email": email,
+            json={"name": "SAVOR Aresto (Demo)", "email": email,
                   "password": password, "slug": "meja-aresto"},
         )
         assert r.status_code == 201, f"register gagal: {r.status_code} {r.text}"

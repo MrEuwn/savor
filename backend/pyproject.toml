@@ -1,7 +1,7 @@
 [project]
-name = "mejaar-backend"
+name = "savor-backend"
 version = "0.1.0"
-description = "MejaAR backend API"
+description = "SAVOR backend API"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.116,<1",
