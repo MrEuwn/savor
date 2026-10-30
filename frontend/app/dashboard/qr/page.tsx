@@ -99,6 +99,7 @@ export default function PrintQrPage() {
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Kembali</span>
             </Link>
+            <Logo size={32} className="rounded-lg shadow-xs" />
             <div>
               <h1 className="font-serif text-base font-normal text-ink-black">
                 Kartu QR Meja

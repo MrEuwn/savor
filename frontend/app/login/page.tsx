@@ -65,7 +65,7 @@ export default function LoginPage() {
       {/* Responsive Split Container */}
       <div className="flex min-h-screen w-full flex-col lg:grid lg:grid-cols-12">
         {/* Kolom Kiri: Visual 3D Background & Headline */}
-        <section className="relative flex min-h-[320px] sm:min-h-[400px] lg:min-h-screen lg:col-span-6 xl:col-span-6 flex-col justify-between overflow-hidden p-6 sm:p-10 lg:p-12 xl:p-16 text-paper-white">
+        <section className="relative flex min-h-80 sm:min-h-100 lg:min-h-screen lg:col-span-6 xl:col-span-6 flex-col justify-between overflow-hidden p-6 sm:p-10 lg:p-12 xl:p-16 text-paper-white">
           {/* Background 3D Image */}
           <div className="absolute inset-0 z-0">
             <Image
@@ -77,20 +77,12 @@ export default function LoginPage() {
               className="object-cover object-center brightness-[0.88] contrast-[1.08]"
             />
             {/* Subtle dark gradient overlay untuk legibilitas teks */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/25" />
-          </div>
-
-          {/* Top Brand / Quote Tag */}
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[11px] font-medium tracking-wider uppercase text-white/90 backdrop-blur-md">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              <span>3D & AR Portions</span>
-            </div>
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/25" />
           </div>
 
           {/* Bottom Hero Typography (Fluid & Responsive, auto-aligned to bottom) */}
           <div className="relative z-10 mt-auto pt-10 lg:pt-16">
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl font-normal leading-[1.15] tracking-tight text-paper-white [text-wrap:balance]">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl font-normal leading-[1.15] tracking-tight text-paper-white text-balance">
               Porsi Nyata
               <br />
               Sebelum Dipesan
@@ -274,7 +266,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={busy}
-                className="mt-3 w-full min-h-[48px] rounded-[14px] bg-ink-black text-paper-white hover:bg-ink-black/90 text-sm font-medium transition-all"
+                className="mt-3 w-full min-h-12 rounded-[14px] bg-ink-black text-paper-white hover:bg-ink-black/90 text-sm font-medium transition-all"
               >
                 {busy
                   ? "Memproses..."
