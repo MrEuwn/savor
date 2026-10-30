@@ -11,29 +11,15 @@ type Props = {
 };
 
 export default function Viewer3D({ src, poster, name }: Props) {
-  const wrapRef = useRef<HTMLDivElement>(null);
   const ref = useRef<any>(null);
-  const [visible, setVisible] = useState(false);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [secure, setSecure] = useState(true);
 
-  // Tunda import model-viewer sampai kartu masuk viewport untuk menghemat konteks WebGL browser
+  // Model-viewer hanya di client browser (custom element window/self).
+  // Import dinamis sekali saat mount => SSR aman, mencegah race condition mount.
   useEffect(() => {
-    const el = wrapRef.current;
-    if (!el || visible) return;
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setVisible(true)),
-      { rootMargin: "200px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [visible]);
-
-  // Model-viewer hanya di client browser (custom element window/self)
-  useEffect(() => {
-    if (!visible) return;
     let cancelled = false;
     setSecure(window.isSecureContext);
     (async () => {
@@ -49,7 +35,7 @@ export default function Viewer3D({ src, poster, name }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [visible]);
+  }, []);
 
   useEffect(() => {
     if (!ready) return;
@@ -103,7 +89,7 @@ export default function Viewer3D({ src, poster, name }: Props) {
   const arBlocked = !secure;
 
   return (
-    <div ref={wrapRef} className="space-y-3">
+    <div className="space-y-3">
       {/* Container model-viewer dengan data-lenis-prevent agar rotasi sentuh tidak memicu scroll Lenis */}
       <div
         data-lenis-prevent="true"
