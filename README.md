@@ -25,6 +25,14 @@ bermodel 3D + 4 foto makanan Indonesia berlisensi CC - lihat `docs/ASSETS.md`).
 
 ## Menjalankan lokal
 
+**Cara termudah (Windows):** double-click **`start.bat`** di root repo.
+Script otomatis: cek & install Node.js + uv (via winget) → install dependencies
+→ seed DB demo → nyalakan backend + frontend → tunggu keduanya siap → buka
+browser. Tunnel HTTPS untuk AR di HP ikut jalan (window "MejaAR Tunnel" —
+bukalah untuk melihat URL `https://xxxx.trycloudflare.com`).
+
+Manual:
+
 ```bash
 # Backend (dev: SQLite otomatis)
 cd backend && uv sync && uv run uvicorn app.main:app --port 8000
@@ -40,7 +48,8 @@ python pos-simulator/pos_sim.py --api http://localhost:8000 --key <API_KEY>
 ```
 
 Login: `http://localhost:3000/login`. Halaman publik: `/public/meja-aresto?table=T-01`.
-AR bekerja via HTTPS atau localhost; di HP pakai URL demo online/tunnel.
+AR bekerja via HTTPS atau localhost; di HP pakai URL tunnel dari `start.bat`
+atau URL demo online.
 
 ## Struktur
 
@@ -48,6 +57,8 @@ AR bekerja via HTTPS atau localhost; di HP pakai URL demo online/tunnel.
 - `frontend/` - Next.js (App Router, TS, Tailwind, @google/model-viewer).
 - `pos-simulator/` - Skrip simulasi POS (menu-sync + toggle ketersediaan).
 - `tests/load/` - Skrip k6 (uji beban endpoint publik).
+- `tools/` - cloudflared.exe (tunnel HTTPS untuk AR di HP via start.bat).
+- `start.bat` / `stop.bat` - Jalankan/hentikan semua layanan sekali double-click.
 - `docs/` - PRD.md, ARCHITECTURE.md, API.md, TEST_REPORT.md, USER_GUIDE.md,
   DECISIONS.md, ASSETS.md, BACKLOG.md.
 - `docker-compose.yml` - Postgres + Redis (prod/verify).

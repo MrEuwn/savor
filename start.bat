@@ -134,6 +134,23 @@ if errorlevel 1 (
 )
 echo [OK] Web siap di :3000
 
+REM ============================================================
+REM 8. Tunnel HTTPS (AR di HP butuh secure context)
+REM ============================================================
+if exist "tools\cloudflared.exe" (
+  echo [AR] Jalankan tunnel HTTPS untuk HP ^(window "MejaAR Tunnel"^)...
+  start "MejaAR Tunnel" /min cmd /c ""%~dp0tools\cloudflared.exe" tunnel --url http://localhost:3000 --no-autoupdate"
+  REM tunggu URL muncul via cloudflared metrics tidak bisa; kasih delay & arahkan user
+  timeout /t 8 /nobreak >nul
+  echo.
+  echo   ^>^> Buka window "MejaAR Tunnel" ^(minimized di taskbar^) untuk lihat
+  echo       URL https://xxxx.trycloudflare.com lalu buka di HP:
+  echo       https://xxxx.trycloudflare.com/public/meja-aresto?table=T-01
+  echo.
+) else (
+  echo [AR] tools\cloudflared.exe tidak ada - AR via HP pakai deploy online atau install cloudflared manual.
+)
+
 echo.
 echo ================================================
 echo    SEMUA SIAP!
@@ -143,6 +160,7 @@ echo   Login     : demo@mejaar.id / MejaAR-2026!
 echo   Menu pub  : http://localhost:3000/public/meja-aresto?table=T-01
 echo   API docs  : http://localhost:8000/docs
 echo.
+echo   AR di HP  : lihat window "MejaAR Tunnel" untuk URL HTTPS
 echo   Matikan semua: double-click stop.bat
 echo ================================================
 echo.
