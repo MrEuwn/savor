@@ -72,3 +72,37 @@ SETELAH DEPLOY — jangan lupa
 [ ] Screenshot halaman untuk proposal (bagian UI/UX Preview)
 [ ] Submit: PDF proposal + URL_FRONTEND + github.com/MrEuwn/mejaar
     ke Google Forms panitia sebelum 30 Okt 2026 23.59 WIB
+
+====================================================================
+ALTERNATIF B — HUGGING FACE SPACES (BILA RENDER MEMINTA KARTU)
+====================================================================
+Gratis 100%, tanpa kartu kredit, sleep hanya setelah 48 jam idle.
+File Dockerfile.hf sudah disiapkan di repo.
+
+1. Daftar/login: https://huggingface.co (pakai email/GitHub).
+2. Klik "New Space":
+   - Space name : savor-api
+   - SDK        : Docker
+   - Visibility : Public (wajib untuk free; jangan taruh secret dalam kode)
+3. Space dibuat → tab "Files" → "Add file" → "Upload files".
+   Upload struktur berikut (pertahankan path):
+     Dockerfile.hf            → ubah nama jadi "Dockerfile" saat upload
+     backend/app/**           (seluruh isi folder app)
+     backend/pyproject.toml
+     backend/seed_demo.py
+     frontend/public/assets/**  (foto + GLB)
+   ATAU cara lebih mudah: clone Space via git:
+     git clone https://huggingface.co/spaces/<username>/savor-api
+     salin file di atas ke dalamnya, lalu:
+     git add . && git commit -m "SAVOR API" && git push
+4. Tunggu build (±3-5 menit, log terlihat di tab "Logs").
+5. URL backend Anda: https://<username>-savor-api.hf.space
+   Tes: buka https://<username>-savor-api.hf.space/healthz
+6. Langkah 2 & 3 di atas (Vercel + CORS) tetap sama, hanya
+   ganti URL_BACKEND dengan URL hf.space Anda.
+
+Catatan HF Spaces:
+- Public Space = semua bisa membaca kode & DB. Jangan simpan
+  secret di file. JWT_SECRET sudah otomatis random per build; untuk
+  stabil, set di Settings > Variables (secret).
+- Sleep 48 jam; cukup buka /healthz satu kali sebelum demo.
