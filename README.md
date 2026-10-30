@@ -113,9 +113,43 @@ Detail + cara mengulang: `docs/TEST_REPORT.md`.
 | `docs/ASSETS.md` | Attribution aset 3D & foto (CC) |
 | `docs/TEST_REPORT.md` | Bukti pengujian + cara mengulang |
 
+## 📄 Deployment Online & Keterbatasannya
+
+SAVOR tersedia dalam **dua mode**:
+
+### Mode 1 — Local (utama, fitur lengkap)
+Mode yang dijalankan via `start.bat` (panduan di atas). Semua fitur bekerja
+penuh: upload GLB/foto, AR, QR, integrasi POS, semua data tersimpan.
+
+### Mode 2 — Online demo (untuk review juri, dengan keterbatasan)
+Karena keterbatasan platform hosting **gratis tanpa kartu kredit** yang masih
+tersedia pada saat pengembangan (Render kini mewajibkan kartu, Railway menutup
+signup regional, HF Spaces Docker kini berbayar), versi online mendeploy
+backend FastAPI sebagai **Vercel Python Serverless** dengan batasan:
+
+| Aspek | Local | Online (Vercel) |
+|---|---|---|
+| Fitur dasar (login, menu, QR, AR) | ✅ penuh | ✅ berfungsi |
+| Data persisten | ✅ SQLite file | ⚠️ ephemeral (`/tmp`) — reset antar cold start; data di-seed ulang otomatis |
+| Upload GLB/foto via dashboard | ✅ | ⚠️ tidak persisten (hilang saat instance baru) |
+| Integrasi POS simulator | ✅ | ✅ |
+| Uji beban k6 & Lighthouse | ✅ terukur | tidak diukur (di luar scope demo) |
+
+Konfigurasi deployment: `api/index.py` (entry serverless) + `vercel.json`
+(routes) + `requirements.txt` (deps backend). Frontend Next.js tetap di-deploy
+terpisah (Root Directory `frontend`), keduanya terhubung via env
+`API_BASE_SERVER`.
+
+> Catatan jujur ini mengikuti prinsip PRD: *"fitur yang belum berjalan dan
+> teruji ditulis sebagai roadmap di proposal, bukan sebagai fitur."*
+> Keterbatasan hosting gratis adalah faktor eksternal, bukan batasan
+> arsitektur — dengan PostgreSQL terkelola (Neon/Supabase) atau object storage,
+> mode online akan setara penuh dengan mode local.
+
 ## 📄 Link demo online
 
-_(diisi saat deploy T12)_
+- Frontend: `_URL_VERCEL_`
+- Backend API: `_URL_BACKEND_` (`/healthz`, `/docs`)
 
 ## Lisensi aset
 
