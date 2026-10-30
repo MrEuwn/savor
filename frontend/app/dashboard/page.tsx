@@ -249,11 +249,12 @@ export default function DashboardPage() {
       window.location.origin;
     (async () => {
       // ponytail: import dinamis di client agar tidak masuk bundle SSR.
-      const { toString } = await import("qrcode");
+      // toDataURL() -> PNG data URL (toString() = SVG mentah, ditolak <img src>).
+      const { toDataURL } = await import("qrcode");
       const all = await Promise.all(
         tables.map(async (t) => ({
           code: t.code,
-          dataUrl: await toString(
+          dataUrl: await toDataURL(
             `${origin}/public/${slug}?table=${encodeURIComponent(t.code)}`,
             { margin: 1, width: 220 },
           ),
